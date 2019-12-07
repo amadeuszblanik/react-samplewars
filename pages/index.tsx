@@ -3,7 +3,7 @@ import { Main } from "../src/layout";
 import styles from "./index.scss";
 import { NextPage } from "next";
 import { Typography } from "@material-ui/core";
-import { TopBar } from "../src/components";
+import {Controls, TopBar} from "../src/components";
 
 interface HomeProps {
     userAgent: string
@@ -16,6 +16,7 @@ const Home: NextPage<HomeProps> = props => {
         <Main>
             <main>
                 <TopBar />
+                <Controls />
                 <h1 className={styles.helloWorld}>Hello world!</h1>
                 <Typography variant="body2" color="textSecondary" align="center">user agent: <span>{userAgent}</span></Typography>
             </main>
