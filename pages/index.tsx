@@ -2,6 +2,7 @@ import React from "react";
 import {Main} from "../src/layout";
 import styles from "./index.scss";
 import { NextPage } from "next";
+import {Typography} from "@material-ui/core";
 
 interface HomeProps {
     userAgent: string
@@ -14,10 +15,10 @@ const Home: NextPage<HomeProps> = props => {
         <Main>
             <main>
                 <h1 className={styles.helloWorld}>Hello world!</h1>
-                <p>user agent: {userAgent}</p>
+                <Typography variant="body2" color="textSecondary" align="center">user agent: <span>{userAgent}</span></Typography>
             </main>
         </Main>
-    )
+    );
 };
 
 Home.getInitialProps = async ({ req }) => {

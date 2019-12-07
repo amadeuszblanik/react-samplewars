@@ -14,8 +14,8 @@ describe("Home", () => {
         expect(
             wrapper
                 .find("main")
-                .find("p")
+                .find("span")
                 .text()
-        ).toEqual("user agent: jest-tests");
+        ).toEqual("jest-tests");
     });
 });

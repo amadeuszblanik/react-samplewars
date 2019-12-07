@@ -1,1 +1,1 @@
-// Enjoy 🔥
+export { theme } from "./theme";
