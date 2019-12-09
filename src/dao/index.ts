@@ -1,1 +1,1 @@
-export { default as getApiData } from "./getApiData";
+export { default as SwApi } from "./swapi";

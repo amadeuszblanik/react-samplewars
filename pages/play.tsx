@@ -3,15 +3,16 @@ import { Main } from "../src/layout";
 import styles from "./index.scss";
 import {Container, Grid, Typography} from "@material-ui/core";
 import {Controls, Details, TopBar} from "../src/components";
-import {getApiData} from "../src/dao";
-import {KIND, PeopleApi, StarshipApi} from "../src/dao/types";
+import {KIND, ResultListResponse, ResultListResponseSingle} from "../src/dao/types";
+import { SwApi } from "../src/dao/";
 
-type API_RESPONSE = PeopleApi | StarshipApi
-type SCORE_RESULTS = "WIN" | "LOSE" | "DRAW";
+type RESULT_SCORE = "WIN" | "LOSE" | "DRAW";
 
 interface HomeProps {
-    playerData: API_RESPONSE;
-    opponentData: API_RESPONSE;
+    apiData: ResultListResponse;
+    id: number;
+    idOpponent: number;
+    kind: KIND;
 }
 
 interface HomeGetInitialProps {
@@ -25,16 +26,25 @@ interface HomeGetInitialProps {
 
 class Play extends React.Component<HomeProps, any> {
     static async getInitialProps({ query: { kind, id, idOpponent } }: HomeGetInitialProps) {
-        return await getApiData(kind, id, idOpponent);
+        const { resultList: apiData } = await new SwApi().getResults();
+        return { apiData, id, idOpponent, kind };
     }
 
-    checkResult = () => {
-        const { opponentData, playerData } = this.props;
+    getResult = () => {
+        const { apiData, kind, id, idOpponent } = this.props;
+        const currentKindData: ResultListResponseSingle | undefined = apiData[kind!]
 
         const score = {
             player: 0,
             opponent: 0
         };
+
+        if (typeof currentKindData === "undefined") {
+            return "DRAW";
+        }
+
+        const playerData = currentKindData.list[id].data;
+        const opponentData = currentKindData.list[idOpponent].data;
 
         if ("mass" in playerData && "mass" in opponentData) {
             score.player = Number(playerData.mass);
@@ -46,14 +56,18 @@ class Play extends React.Component<HomeProps, any> {
             return "DRAW";
         }
 
-        const isAnyNaN = isNaN(score.player) || isNaN(score.opponent);
-        const result: SCORE_RESULTS = !isAnyNaN ? score.player > score.opponent ? "WIN" : "LOSE" : "DRAW";
+        const isAnyNaN: boolean = isNaN(score.player) || isNaN(score.opponent);
+        const result: RESULT_SCORE = !isAnyNaN ? score.player >= score.opponent ? score.player !== score.opponent ? "WIN" : "DRAW" : "LOSE" : "DRAW";
 
         return result;
     }
 
     render() {
-        const result = this.checkResult();
+        const { apiData, kind } = this.props;
+        const result: RESULT_SCORE = this.getResult();
+        const currentKindData: ResultListResponseSingle | undefined = apiData[kind!]
+
+        console.log("Play(render)::", { currentKindData });
 
         return (
             <Main>

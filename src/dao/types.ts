@@ -1,4 +1,4 @@
-export type KIND = "people" | "starship";
+export type KIND = "people" | "starships";
 
 export interface PeopleApi {
     name: string;
@@ -38,4 +38,26 @@ export interface StarshipApi {
     created: Date;
     edited: Date;
     url: string;
+}
+
+export interface ResultApi {
+    count: number;
+    next: string;
+    previous: string;
+    results: PeopleApi[] | StarshipApi[];
+}
+
+
+export interface ResultListItem {
+    id: number;
+    data: PeopleApi | StarshipApi;
+}
+
+export interface ResultListResponseSingle {
+    length: number;
+    list: ResultListItem[];
+}
+
+export type ResultListResponse = {
+    [key in KIND]?: ResultListResponseSingle;
 }

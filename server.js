@@ -9,7 +9,7 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 const ssrCache = cacheableResponse({
-    ttl: 1000 * 60 * 60, // 1hour
+    ttl: !dev ? 1000 * 60 * 60 * 8 : 1,
     get: async ({ req, res, pagePath, queryParams }) => ({
         data: await app.renderToHTML(req, res, pagePath, queryParams)
     }),
