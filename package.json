@@ -22,7 +22,8 @@
     "isomorphic-unfetch": "^3.0.0",
     "next": "9.1.4",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "rxjs": "^6.5.3"
   },
   "devDependencies": {
     "@types/enzyme": "^3.10.3",

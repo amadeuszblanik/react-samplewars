@@ -3,10 +3,16 @@
     "target": "esnext",
     "module": "esnext",
     "jsx": "preserve",
-    "typeRoots": ["./node_modules/@types"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./@types"
+    ],
     "lib": [
       "dom",
       "es2017"
+    ],
+    "types": [
+      "node"
     ],
     "moduleResolution": "node",
     "allowJs": true,
@@ -19,6 +25,7 @@
     "removeComments": false,
     "preserveConstEnums": true,
     "sourceMap": true,
+    "importHelpers": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,

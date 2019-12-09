@@ -3,15 +3,15 @@ import { Main } from "../src/layout";
 import styles from "./index.scss";
 import {Container, Grid, Typography} from "@material-ui/core";
 import {Controls, Details, TopBar} from "../src/components";
-import {getApiData} from "../src/dao";
-import {KIND, PeopleApi, StarshipApi} from "../src/dao/types";
+import {getApiData, ResultList} from "../src/dao";
+import {API_RESPONSE, KIND, ResultListResponse} from "../src/dao/types";
 
-type API_RESPONSE = PeopleApi | StarshipApi
 type SCORE_RESULTS = "WIN" | "LOSE" | "DRAW";
 
 interface HomeProps {
     playerData: API_RESPONSE;
     opponentData: API_RESPONSE;
+    resultList: ResultListResponse;
 }
 
 interface HomeGetInitialProps {
@@ -25,7 +25,10 @@ interface HomeGetInitialProps {
 
 class Play extends React.Component<HomeProps, any> {
     static async getInitialProps({ query: { kind, id, idOpponent } }: HomeGetInitialProps) {
-        return await getApiData(kind, id, idOpponent);
+        const { playerData, opponentData } = await getApiData(kind, id, idOpponent)
+        const { resultList } = await new ResultList(["people", "starships"]).getResults();
+
+        return { playerData, opponentData, resultList };
     }
 
     checkResult = () => {
@@ -53,20 +56,21 @@ class Play extends React.Component<HomeProps, any> {
     }
 
     render() {
+        const { playerData, opponentData, resultList } = this.props;
         const result = this.checkResult();
 
         return (
             <Main>
                 <TopBar />
                 <Container>
-                    <Controls />
+                    <Controls list={resultList} />
                     <h1 className={styles.helloWorld}>You {result}</h1>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={6}>
-                            <Details/>
+                            <Details title="Player" data={playerData} />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <Details/>
+                            <Details title="Opponent" data={opponentData} />
                         </Grid>
                     </Grid>
                     <Typography variant="body2" color="textSecondary" align="center">user agent: <span></span></Typography>
