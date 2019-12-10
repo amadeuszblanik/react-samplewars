@@ -106,6 +106,29 @@ class Play extends React.Component<PlayProps, PlayState> {
         return result;
     }
 
+    getDetailsOfId = (id: number) => {
+        const { kind } = this.props;
+        const { apiData } = this.state;
+
+        if (!apiData) {
+            return undefined;
+        }
+
+        const dataKind: ResultListResponseSingle | undefined = apiData[kind];
+
+        if (dataKind === undefined) {
+            return undefined;
+        }
+
+        const dataOfId = dataKind.list[id - 1];
+
+        if (dataOfId === undefined) {
+            return undefined;
+        }
+
+        return dataOfId.data;
+    }
+
     render() {
         const { id, idOpponent } = this.props;
         const { apiData, apiStatus } = this.state;
@@ -121,7 +144,7 @@ class Play extends React.Component<PlayProps, PlayState> {
                 <TopBar />
                 <Container>
                     <Controls />
-                    <h1 className={styles.helloWorld}>You {result}</h1>
+                    <h1 className={styles.helloWorld}>The winner is {result}! 🎉</h1>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={6}>
                             <SelectPlayer type="player" data={apiData} initialValue={id} />
@@ -130,10 +153,16 @@ class Play extends React.Component<PlayProps, PlayState> {
                             <SelectPlayer type="opponent" data={apiData} initialValue={idOpponent} />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <Details/>
+                            <Details
+                                title="player"
+                                data={this.getDetailsOfId(id)}
+                            />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <Details/>
+                            <Details
+                                title="opponent"
+                                data={this.getDetailsOfId(idOpponent)}
+                            />
                         </Grid>
                     </Grid>
                     <Typography variant="body2" color="textSecondary" align="center">user agent: <span></span></Typography>

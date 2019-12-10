@@ -76,10 +76,10 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
         const { id } = this.state;
         return(
             <FormControl style={{ width: "100%" }}>
-                <InputLabel id="demo-simple-select-label">Select player for {type}</InputLabel>
+                <InputLabel id={`select-player-label_${type}`}>Select player for {type}</InputLabel>
                 <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId={`select-player-label_${type}`}
+                    id={`select-player-${type}`}
                     value={id}
                     onChange={this.handleChange}
                 >
