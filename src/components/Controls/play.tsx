@@ -50,11 +50,9 @@ export class Play extends React.PureComponent<{}, PlayState> {
         const { url } = this.state;
         return (
             <Link href={url.href} as={url.as}>
-                <a>
-                    <Button variant="contained" color="secondary">
+                <Button variant="contained" color="secondary">
                         New battle ⚔️
-                    </Button>
-                </a>
+                </Button>
             </Link>
         );
     }
