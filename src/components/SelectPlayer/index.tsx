@@ -1,27 +1,47 @@
 import React from "react";
 import {FormControl, InputLabel, MenuItem, Select} from "@material-ui/core";
-import {ResultListItem} from "../../dao/types";
+import {KIND, ResultListItem, ResultListResponse, ResultListResponseSingle} from "../../dao/types";
 import {settingsStore} from "../../services";
+import {Subscription} from "rxjs";
+import {Settings} from "../../services/settings";
 
 interface SelectPlayerProps {
     type: "player" | "opponent";
-    list: ResultListItem[];
+    data: ResultListResponse;
     initialValue: number;
 }
 
 interface SelectPlayerState {
     id: number;
+    kind: KIND;
 }
 
 class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerState> {
+    private settingsSubscriber: Subscription | undefined;
+
     constructor(props: SelectPlayerProps) {
         super(props);
         const { initialValue } = props;
 
         this.state = {
             id: initialValue,
+            kind: "people",
         };
     }
+
+    componentDidMount() {
+        this.settingsSubscriber = settingsStore.subscription().subscribe(this.handleSettingsSubscriber);
+    }
+
+    componentWillUnmount() {
+        if (this.settingsSubscriber === undefined) {
+            return;
+        }
+
+        this.settingsSubscriber.unsubscribe();
+    }
+
+    handleSettingsSubscriber = (next: Settings) => this.setState({ kind: next.kind });
 
     handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         const { type } = this.props;
@@ -35,8 +55,16 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
     }
 
     renderListItems = () => {
-        const { list } = this.props;
+        const { data } = this.props;
+        const { kind } = this.state;
+        const dataKind: ResultListResponseSingle | undefined = data[kind!];
+        const list: ResultListItem[] = typeof dataKind !== "undefined" ? dataKind.list : [];
         const children: JSX.Element[] = [];
+
+        if (!list) {
+            return children;
+        }
+
         list.forEach((entry: ResultListItem) => {
             children.push(<MenuItem value={entry.id}>{entry.data.name}</MenuItem>);
         });

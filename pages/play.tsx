@@ -107,7 +107,7 @@ class Play extends React.Component<PlayProps, PlayState> {
     }
 
     render() {
-        const { kind, id, idOpponent } = this.props;
+        const { id, idOpponent } = this.props;
         const { apiData, apiStatus } = this.state;
 
         if (!apiData) {
@@ -115,7 +115,6 @@ class Play extends React.Component<PlayProps, PlayState> {
         }
 
         const result: RESULT_SCORE = this.getResult();
-        const currentKindData: ResultListResponseSingle | undefined = apiData[kind!];
 
         return (
             <Main>
@@ -125,10 +124,10 @@ class Play extends React.Component<PlayProps, PlayState> {
                     <h1 className={styles.helloWorld}>You {result}</h1>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={6}>
-                            <SelectPlayer type="player" list={typeof currentKindData !== "undefined" ? currentKindData.list : []} initialValue={id} />
+                            <SelectPlayer type="player" data={apiData} initialValue={id} />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <SelectPlayer type="opponent" list={typeof currentKindData !== "undefined" ? currentKindData.list : []} initialValue={idOpponent} />
+                            <SelectPlayer type="opponent" data={apiData} initialValue={idOpponent} />
                         </Grid>
                         <Grid item xs={12} md={6}>
                             <Details/>
