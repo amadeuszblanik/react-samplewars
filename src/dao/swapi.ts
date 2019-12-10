@@ -20,7 +20,7 @@ class SwApi {
     getResultsOfKind = async (kind: KIND) => {
         let hasNextElement = true,
             currentPage = 1,
-            resultIndex = 0,
+            resultIndex = 1,
             length = 0;
         const list: ResultListItem[] = [];
 
