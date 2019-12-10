@@ -1,5 +1,6 @@
 import fetch from "isomorphic-unfetch";
 import {KIND, ResultApi, ResultListItem, ResultListResponse} from "./types";
+import {forEachObject} from "../utils";
 
 const BASE_URL = "https://swapi.co/api/";
 
@@ -10,11 +11,31 @@ class SwApi {
         this.kinds = kinds;
     }
 
+    http = async (url: string) => {
+        const results = await fetch(`${url}`);
+        return await results.json();
+    }
+
     fetchData = async (kind: KIND, page: number) => {
-        const results = await fetch(`${BASE_URL}${kind}/?page=${page}&format=json`);
-        const resultsData: ResultApi = await results.json();
+        const resultsData: ResultApi = await this.http(`${BASE_URL}${kind}/?page=${page}&format=json`);
 
         return resultsData;
+    }
+
+    getValueOf = async (url: string, value: string) => {
+        const response = await this.http(url + "?format=json");
+        return response[value];
+    }
+
+    getValueOfAll = async (urls: string[], value: string) => {
+        const values: string[] = [];
+
+        for(const url of urls) {
+            const response = await this.http(url + "?format=json");
+            values.push(response[value]);
+        }
+
+        return values.length > 0 ? values.join(", ") : "None";
     }
 
     getResultsOfKind = async (kind: KIND) => {
@@ -31,7 +52,25 @@ class SwApi {
             length = count;
 
             for (const result of results) {
-                list.push({ id: resultIndex, data: result });
+                const resultTransformed: any = {};
+                forEachObject(result, async (key, value) => {
+                    if (key === "species") {
+                        value = await this.getValueOf(value, "name");
+                    } else if (key === "homeworld") {
+                        value = await this.getValueOf(value, "name");
+                    } else if (key === "films") {
+                        value = await this.getValueOfAll(value, "title");
+                    } else if (key === "vehicles") {
+                        value = await this.getValueOfAll(value, "name");
+                    } else if (key === "starships") {
+                        value = await this.getValueOfAll(value, "name");
+                    } else if (key === "pilots") {
+                        value = await this.getValueOfAll(value, "name");
+                    }
+                    resultTransformed[key] = value;
+                });
+
+                list.push({ id: resultIndex, data: resultTransformed });
                 resultIndex++;
             }
 
