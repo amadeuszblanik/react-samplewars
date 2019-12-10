@@ -2,11 +2,11 @@ import React from "react";
 import { Main } from "../src/layout";
 import styles from "./index.scss";
 import {Container, Grid, Typography} from "@material-ui/core";
-import {Controls, Details, TopBar, SelectPlayer} from "../src/components";
+import {Controls, Details, TopBar, SelectPlayer, Loading} from "../src/components";
 import {KIND, ResultListResponse, ResultListResponseSingle} from "../src/dao/types";
-import {scoreboardStore} from "../src/services";
+import Scoreboard from "../src/utils/scoreboard";
 
-type RESULT_SCORE = "player" | "opponent" | "draw";
+type RESULT_SCORE = "player" | "opponent" | "draw" | "unknown";
 
 interface PlayProps {
     id: number;
@@ -16,6 +16,7 @@ interface PlayProps {
 
 interface PlayState {
     apiData: ResultListResponse | false;
+    apiStatus: boolean;
     currentResult: RESULT_SCORE;
 }
 
@@ -29,10 +30,16 @@ interface HomeGetInitialProps {
 }
 
 class Play extends React.Component<PlayProps, PlayState> {
+    private scoreboard: Scoreboard | undefined;
+
     constructor(props: PlayProps) {
         super(props);
 
-        this.state = { apiData: false, currentResult: "draw" };
+        this.state = {
+            apiData: false,
+            apiStatus: true,
+            currentResult: "draw",
+        };
     }
 
     static async getInitialProps({ query: { kind, id, idOpponent } }: HomeGetInitialProps) {
@@ -40,45 +47,37 @@ class Play extends React.Component<PlayProps, PlayState> {
     }
 
     componentDidMount() {
+        this.scoreboard = new Scoreboard();
         const apiDataInLocalStorage = localStorage.getItem("apiDataSaved");
 
         if (!apiDataInLocalStorage) {
-            throw new Error("No api data in localStorage!");
+            this.setState({ apiStatus: false });
+            return;
         }
 
-        this.setState({ apiData: JSON.parse(apiDataInLocalStorage) });
-
-        const result: RESULT_SCORE = this.getResult();
-
-        if (result === "player") {
-            scoreboardStore.addPointPlayer();
-        } else if (result === "opponent") {
-            scoreboardStore.addPointOpponent();
-        } else if (result === "draw") {
-            scoreboardStore.addPointDraw();
-        }
-
-        this.setState({ currentResult: result });
+        this.setState({
+            apiData: JSON.parse(apiDataInLocalStorage),
+        });
     }
 
     getResult = () => {
+        let result: RESULT_SCORE = "unknown";
         const { kind, id, idOpponent } = this.props;
         const { apiData } = this.state;
 
-        if (!apiData) {
-            console.warn('no data api');
-            return "draw";
+        if (!apiData || !this.scoreboard) {
+            return result;
         }
 
         const currentKindData: ResultListResponseSingle | undefined = apiData[kind!];
-
         const score = {
             player: 0,
-            opponent: 0
-        };
+            opponent: 0,
+        }
+
 
         if (typeof currentKindData === "undefined") {
-            return "draw";
+            return result;
         }
 
         const playerData = currentKindData.list[id].data;
@@ -90,28 +89,33 @@ class Play extends React.Component<PlayProps, PlayState> {
         } else if ("crew" in playerData && "crew" in opponentData) {
             score.player = Number(playerData.crew);
             score.opponent = Number(opponentData.crew);
-        } else {
-            return "draw";
         }
 
-        const isAnyNaN: boolean = isNaN(score.player) || isNaN(score.opponent);
-        const result: RESULT_SCORE = !isAnyNaN ? score.player >= score.opponent ? score.player !== score.opponent ? "player" : "draw" : "opponent" : "draw";
+        const isValid = !isNaN(score.player) && !isNaN(score.opponent);
+
+        if (isValid) {
+            if (score.player > score.opponent) {
+                result = "player";
+            } else if (score.player === score.opponent) {
+                result = "draw";
+            } else if (score.player < score.opponent) {
+                result = "opponent";
+            }
+        }
 
         return result;
     }
 
     render() {
         const { kind, id, idOpponent } = this.props;
-        const { apiData } = this.state;
+        const { apiData, apiStatus } = this.state;
 
         if (!apiData) {
-            return (<>You need to init app first</>);
+            return (<Loading content={!apiStatus ? "You need to reinitialise application" : "Loading…"} />);
         }
 
         const result: RESULT_SCORE = this.getResult();
         const currentKindData: ResultListResponseSingle | undefined = apiData[kind!];
-
-        console.log("Play(render)::", { currentKindData });
 
         return (
             <Main>

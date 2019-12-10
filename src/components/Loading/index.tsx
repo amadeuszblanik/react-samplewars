@@ -2,8 +2,7 @@ import React from "react";
 import {Button, Container, Typography} from "@material-ui/core";
 import * as styles from "./styles.scss";
 import {Main} from "../../layout";
-import {TopBar} from "../index";
-import Link from "next/link";
+import {Link, TopBar} from "../index";
 
 interface LoadingProps {
     content?: string;
