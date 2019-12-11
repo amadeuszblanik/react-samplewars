@@ -8,6 +8,11 @@ interface LoadingProps {
     content?: string;
 }
 
+const clearLocalStorage = () => {
+    localStorage.removeItem("apiDataSaved");
+    localStorage.removeItem("apiDataSavedTimestamp");
+}
+
 const Loading: React.FunctionComponent<LoadingProps> = props => {
     const { content } = props;
 
@@ -19,8 +24,8 @@ const Loading: React.FunctionComponent<LoadingProps> = props => {
                     <div className={styles.Content}>
                         <Typography variant="h5" color="textSecondary" align="center">{content}</Typography>
                     </div>
-                    <Link href="/" >
-                        <Button variant="contained">Restart</Button>
+                    <Link href={`/?c=${new Date().getTime()}`} >
+                        <Button variant="contained" onClick={clearLocalStorage}>Restart</Button>
                     </Link>
                 </div>
             </Container>
