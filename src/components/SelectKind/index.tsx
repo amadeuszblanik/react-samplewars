@@ -56,7 +56,7 @@ class SelectKind extends React.PureComponent<SelectKindProps, SelectKindState> {
         }
 
         list.forEach(entry => {
-            children.push(<MenuItem value={entry}>{entry}</MenuItem>);
+            children.push(<MenuItem key={entry} value={entry}>{entry}</MenuItem>);
         });
 
         return children;

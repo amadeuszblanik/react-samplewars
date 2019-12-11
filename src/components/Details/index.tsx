@@ -27,14 +27,14 @@ class Details extends React.PureComponent<DetailsProps> {
             }
 
             children.push(
-                <>
+                <div key={key}>
                     <Typography color="textSecondary">
                         {TRANSLATIONS[key]}
                     </Typography>
                     <Typography variant="body2" component="p">
                         {value}
                     </Typography>
-                </>
+                </div>
             );
         }); }
 

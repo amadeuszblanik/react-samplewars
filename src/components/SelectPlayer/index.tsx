@@ -66,7 +66,7 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
         }
 
         list.forEach((entry: ResultListItem) => {
-            children.push(<MenuItem value={entry.id}>{entry.data.name}</MenuItem>);
+            children.push(<MenuItem key={entry.id} value={entry.id}>{entry.data.name}</MenuItem>);
         });
         return children;
     }
@@ -83,7 +83,7 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
                     value={id}
                     onChange={this.handleChange}
                 >
-                    <MenuItem value={0} disabled>-- Select character --</MenuItem>
+                    <MenuItem value={0}>-- Select character --</MenuItem>
                     {this.renderListItems()}
                 </Select>
             </FormControl>
