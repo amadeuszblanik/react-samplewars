@@ -21,8 +21,8 @@ app.prepare().then(() => {
 
     server.get("/", (req, res) => ssrCache({ req, res, pagePath: "/" }));
 
-    server.get("/play/:kind/:id/:idOpponent", (req, res) => {
-        const queryParams = { id: req.params.id, idOpponent: req.params.idOpponent, kind: req.params.kind };
+    server.get("/play/:kind/", (req, res) => {
+        const queryParams = { kind: req.params.kind };
         const pagePath = "/play";
         return ssrCache({ req, res, pagePath, queryParams });
     });

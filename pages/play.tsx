@@ -5,12 +5,13 @@ import {Container, Grid, Typography} from "@material-ui/core";
 import {Controls, Details, TopBar, SelectPlayer, Loading} from "../src/components";
 import {KIND, ResultListResponse, ResultListResponseSingle} from "../src/dao/types";
 import Scoreboard from "../src/utils/scoreboard";
+import {Subscription} from "rxjs";
+import {settingsStore} from "../src/services";
+import {Settings} from "../src/services/settings";
 
 type RESULT_SCORE = "player" | "opponent" | "draw" | "unknown";
 
 interface PlayProps {
-    id: number;
-    idOpponent: number;
     kind: KIND;
 }
 
@@ -18,19 +19,22 @@ interface PlayState {
     apiData: ResultListResponse | false;
     apiStatus: boolean;
     currentResult: RESULT_SCORE;
+    characters: {
+        player: number;
+        opponent: number;
+    };
 }
 
 interface HomeGetInitialProps {
     query: {
         kind: KIND;
-        id: number;
-        idOpponent: number;
     };
     req: any;
 }
 
 class Play extends React.Component<PlayProps, PlayState> {
     private scoreboard: Scoreboard | undefined;
+    private settingsSubscriber: Subscription | undefined;
 
     constructor(props: PlayProps) {
         super(props);
@@ -39,15 +43,20 @@ class Play extends React.Component<PlayProps, PlayState> {
             apiData: false,
             apiStatus: true,
             currentResult: "draw",
+            characters: {
+                player: 0,
+                opponent: 0,
+            }
         };
     }
 
-    static async getInitialProps({ query: { kind, id, idOpponent } }: HomeGetInitialProps) {
-        return { id, idOpponent, kind };
+    static async getInitialProps({ query: { kind } }: HomeGetInitialProps) {
+        return { kind };
     }
 
     componentDidMount() {
         this.scoreboard = new Scoreboard();
+        this.settingsSubscriber = settingsStore.subscription().subscribe(this.handleSettingsSubscriber);
         const apiDataInLocalStorage = localStorage.getItem("apiDataSaved");
 
         if (!apiDataInLocalStorage) {
@@ -60,10 +69,26 @@ class Play extends React.Component<PlayProps, PlayState> {
         });
     }
 
+    componentWillUnmount() {
+        if (this.settingsSubscriber === undefined) {
+            return;
+        }
+
+        this.settingsSubscriber.unsubscribe();
+    }
+
+    handleSettingsSubscriber = (next: Settings) => {
+        const characters = {
+            player: next.player,
+            opponent: next.opponent,
+        }
+        this.setState({ characters });
+    }
+
     getResult = () => {
         let result: RESULT_SCORE = "unknown";
-        const { kind, id, idOpponent } = this.props;
-        const { apiData } = this.state;
+        const { kind } = this.props;
+        const { apiData, characters: { player: id, opponent: idOpponent } } = this.state;
 
         if (!apiData || !this.scoreboard) {
             return result;
@@ -73,7 +98,7 @@ class Play extends React.Component<PlayProps, PlayState> {
         const score = {
             player: 0,
             opponent: 0,
-        }
+        };
 
 
         if (typeof currentKindData === "undefined") {
@@ -130,8 +155,7 @@ class Play extends React.Component<PlayProps, PlayState> {
     }
 
     render() {
-        const { id, idOpponent } = this.props;
-        const { apiData, apiStatus } = this.state;
+        const { apiData, apiStatus, characters: { player: id, opponent: idOpponent } } = this.state;
 
         if (!apiData) {
             return (<Loading content={!apiStatus ? "You need to reinitialise application" : "Loading…"} />);
