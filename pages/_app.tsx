@@ -21,7 +21,7 @@ export default class MyApp extends App {
         return (
             <React.Fragment>
                 <Head>
-                    <title>My page</title>
+                    <title>SampleWars</title>
                 </Head>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
