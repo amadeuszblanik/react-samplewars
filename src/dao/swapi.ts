@@ -1,5 +1,5 @@
 import fetch from "isomorphic-unfetch";
-import {KIND, CacheApi, ResultApi, ResultListItem, ResultListResponse} from "./types";
+import {KIND, CacheApi, ResultApi, ResultListItem, ResultListResponse} from "../dto";
 import {forEachObject} from "../utils";
 
 const BASE_URL = "https://swapi.co/api/";

@@ -3,7 +3,7 @@ import styles from "./styles.scss";
 import {Button, Grid, Typography} from "@material-ui/core";
 import {SelectKind} from "../index";
 import {Scoreboard} from "../../../pages/play";
-import {KIND} from "../../dao/types";
+import {KIND} from "../../dto";
 
 export interface ControlsProps {
     kind: KIND;

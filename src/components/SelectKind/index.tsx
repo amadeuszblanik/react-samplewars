@@ -1,6 +1,6 @@
 import React from "react";
 import {Button} from "@material-ui/core";
-import {KIND} from "../../dao/types";
+import {KIND} from "../../dto";
 import {Link} from "../index";
 
 export interface SelectKindProps {

@@ -3,7 +3,7 @@ import { Main } from "../src/layout";
 import styles from "./index.scss";
 import {Container, Grid, Typography} from "@material-ui/core";
 import {Controls, Details, TopBar, SelectPlayer, Loading} from "../src/components";
-import {KIND, ResultListResponse, ResultListResponseSingle} from "../src/dao/types";
+import {KIND, ResultListResponse, ResultListResponseSingle} from "../src/dto";
 import {Subscription} from "rxjs";
 import {settingsStore} from "../src/services";
 import {Settings} from "../src/services/settings";

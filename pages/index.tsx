@@ -3,41 +3,87 @@ import { Main } from "../src/layout";
 import styles from "./index.scss";
 import {Fab, Typography} from "@material-ui/core";
 import GamesIcon from "@material-ui/icons/Games";
-import {TopBar} from "../src/components";
+import {Loading, TopBar} from "../src/components";
 import Link from "next/link";
 import {SwApi} from "../src/dao";
-import {ResultListResponse} from "../src/dao/types";
+import {ResultListResponse} from "../src/dto";
+import {hoursDiff} from "../src/utils";
 
-interface HomeProps {
-    apiData: ResultListResponse;
+interface HomeState {
+    fetching: boolean;
+    error?: string;
 }
 
-class Home extends React.Component<HomeProps> {
-    static async getInitialProps() {
+class Home extends React.Component<{}, HomeState> {
+    constructor(props: Readonly<{}>) {
+        super(props);
+
+        this.state = {
+            fetching: true,
+        };
+    }
+
+    async componentDidMount() {
+        if (this.checkCachedData()) {
+            return;
+        }
+
+        const apiData: ResultListResponse | boolean = await this.fetchData();
+
+        if (!apiData) {
+            this.setState({ error: "Something went wrong during downloading data from API. Please try again." });
+            return;
+        }
+
+        localStorage.setItem("apiDataSaved", JSON.stringify(apiData));
+        localStorage.setItem("apiDataSavedTimestamp", String(new Date().getTime()));
+    }
+
+    checkCachedData = () => {
+        const timeOfCachedData = Number(localStorage.getItem("apiDataSavedTimestamp"));
+        const cachedData = localStorage.getItem("apiDataSaved");
+        const currentDate = new Date();
+        const validCacheDate =  !isNaN(timeOfCachedData) ? hoursDiff(timeOfCachedData, currentDate) <= 8 : false;
+
+        if (!validCacheDate || !cachedData) {
+            return false;
+        }
+
+        this.setState({ fetching: false });
+        return true;
+    }
+
+    fetchData = async () => {
         try {
             const {resultList: apiData} = await new SwApi().getResults();
-            return { apiData };
+            this.setState({
+                fetching: false
+            });
+            return apiData;
         } catch (err) {
-            console.error("An error has occured", { err });
+            console.error("An error has occured", {err});
+            this.setState({
+                error: "Can't connect to SWAPI. Please try again later"
+            });
+            return false;
         }
     }
 
-    componentDidMount() {
-        const { apiData } = this.props;
-
-        localStorage.setItem("apiDataSaved", JSON.stringify(apiData));
-    }
-
     render() {
+        const { fetching, error } = this.state;
+
+        if (error) {
+            return <Loading content={error} />;
+        }
         return (
             <Main>
                 <main>
                     <TopBar/>
                     <div className={styles.playWrapper}>
                         <Link href="/play?kind=people" as="/play/people/">
-                            <Fab variant="extended">
+                            <Fab variant="extended" disabled={fetching}>
                                 <GamesIcon/>
-                                Play
+                                {fetching ? "Loading…" : "Play"}
                             </Fab>
                         </Link>
                     </div>

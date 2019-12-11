@@ -1,5 +1,5 @@
 import {BehaviorSubject} from "rxjs";
-import {KIND} from "../dao/types";
+import {KIND} from "../dto";
 
 export interface Settings {
     kind: KIND;

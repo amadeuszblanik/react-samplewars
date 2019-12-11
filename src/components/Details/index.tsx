@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./styles.scss";
 import {Card, CardContent, Typography} from "@material-ui/core";
-import {PeopleApi, StarshipApi} from "../../dao/types";
+import {PeopleApi, StarshipApi} from "../../dto";
 import {forEachObject} from "../../utils";
 import {TRANSLATIONS} from "./translations";
 

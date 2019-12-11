@@ -1,6 +1,6 @@
 import React from "react";
 import {FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch} from "@material-ui/core";
-import {KIND, ResultListItem, ResultListResponse, ResultListResponseSingle} from "../../dao/types";
+import {KIND, ResultListItem, ResultListResponse, ResultListResponseSingle} from "../../dto";
 import {settingsStore} from "../../services";
 import {getRandomNumber} from "../../utils";
 
