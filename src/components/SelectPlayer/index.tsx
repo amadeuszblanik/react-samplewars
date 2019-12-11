@@ -1,9 +1,10 @@
 import React from "react";
-import {FormControl, InputLabel, MenuItem, Select} from "@material-ui/core";
+import {Button, FormControl, Grid, InputLabel, MenuItem, Select} from "@material-ui/core";
 import {KIND, ResultListItem, ResultListResponse, ResultListResponseSingle} from "../../dao/types";
 import {settingsStore} from "../../services";
 import {Subscription} from "rxjs";
 import {Settings} from "../../services/settings";
+import {getRandomNumber} from "../../utils";
 
 interface SelectPlayerProps {
     type: "player" | "opponent";
@@ -54,11 +55,15 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
         this.setState({ id: value as number });
     }
 
-    renderListItems = () => {
+    getListCurrentKind = () => {
         const { data } = this.props;
         const { kind } = this.state;
         const dataKind: ResultListResponseSingle | undefined = data[kind!];
-        const list: ResultListItem[] = typeof dataKind !== "undefined" ? dataKind.list : [];
+        return typeof dataKind !== "undefined" ? dataKind.list : [];
+    }
+
+    renderListItems = () => {
+        const list: ResultListItem[] = this.getListCurrentKind();
         const children: JSX.Element[] = [];
 
         if (!list) {
@@ -71,21 +76,41 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
         return children;
     }
 
+    randomiseCharacter = () => {
+        const list: ResultListItem[] = this.getListCurrentKind();
+
+        if (!list) {
+            return;
+        }
+
+        this.setState({ id: getRandomNumber(1, list.length) });
+    }
+
     render() {
         const { type } = this.props;
         const { id } = this.state;
         return(
             <FormControl style={{ width: "100%" }}>
-                <InputLabel id={`select-player-label_${type}`}>Select player for {type}</InputLabel>
-                <Select
-                    labelId={`select-player-label_${type}`}
-                    id={`select-player-${type}`}
-                    value={id}
-                    onChange={this.handleChange}
-                >
-                    <MenuItem value={0} disabled>-- Select character --</MenuItem>
-                    {this.renderListItems()}
-                </Select>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} md={8}>
+                        <InputLabel id={`select-player-label_${type}`}>Select player for {type}</InputLabel>
+                        <Select
+                            labelId={`select-player-label_${type}`}
+                            id={`select-player-${type}`}
+                            value={id}
+                            onChange={this.handleChange}
+                            style={{ width: "100%" }}
+                        >
+                            <MenuItem value={0} disabled>-- Select character --</MenuItem>
+                            {this.renderListItems()}
+                        </Select>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                        <Button color="primary" onClick={this.randomiseCharacter}>
+                            Random
+                        </Button>
+                    </Grid>
+                </Grid>
             </FormControl>
         );
     }

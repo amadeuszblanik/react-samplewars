@@ -34,7 +34,7 @@ class Home extends React.Component<HomeProps> {
                 <main>
                     <TopBar/>
                     <div className={styles.playWrapper}>
-                        <Link href="/play?kind=people&id=0&idOpponent=0" as="/play/people/0/0/">
+                        <Link href="/play?kind=people" as="/play/people/">
                             <Fab variant="extended">
                                 <GamesIcon/>
                                 Play
