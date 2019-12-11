@@ -5,11 +5,11 @@ import {Subscription} from "rxjs";
 import {settingsStore} from "../../services";
 import {Settings} from "../../services/settings";
 
-interface SelectKindProps {
+export interface SelectKindProps {
     list?: KIND[];
 }
 
-interface SelectKindState {
+export interface SelectKindState {
     value: KIND;
 }
 
@@ -66,10 +66,10 @@ class SelectKind extends React.PureComponent<SelectKindProps, SelectKindState> {
         const { value } = this.state;
         return(
             <FormControl style={{ width: "100%" }}>
-                <InputLabel id="demo-simple-select-label">Select kind of battle</InputLabel>
+                <InputLabel id="select-kind_label">Select kind of battle</InputLabel>
                 <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId="select-kind_label"
+                    id="select-kind_select"
                     value={value}
                     onChange={this.handleChange}
                 >
