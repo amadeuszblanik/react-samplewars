@@ -14,8 +14,12 @@ interface HomeProps {
 
 class Home extends React.Component<HomeProps> {
     static async getInitialProps() {
-        const { resultList: apiData } = await new SwApi().getResults();
-        return { apiData };
+        try {
+            const {resultList: apiData} = await new SwApi().getResults();
+            return { apiData };
+        } catch (err) {
+            console.error("An error has occured", { err });
+        }
     }
 
     componentDidMount() {
@@ -42,6 +46,6 @@ class Home extends React.Component<HomeProps> {
             </Main>
         );
     }
-};
+}
 
 export default Home;
