@@ -4,7 +4,6 @@ import styles from "./index.scss";
 import {Container, Grid, Typography} from "@material-ui/core";
 import {Controls, Details, TopBar, SelectPlayer, Loading} from "../src/components";
 import {KIND, ResultListResponse, ResultListResponseSingle} from "../src/dao/types";
-import Scoreboard from "../src/utils/scoreboard";
 import {Subscription} from "rxjs";
 import {settingsStore} from "../src/services";
 import {Settings} from "../src/services/settings";
@@ -13,6 +12,11 @@ type RESULT_SCORE = "player" | "opponent" | "draw" | "unknown";
 
 interface PlayProps {
     kind: KIND;
+}
+
+export interface Scoreboard {
+    player: number;
+    opponent: number;
 }
 
 interface PlayState {
@@ -33,7 +37,10 @@ interface HomeGetInitialProps {
 }
 
 class Play extends React.Component<PlayProps, PlayState> {
-    private scoreboard: Scoreboard | undefined;
+    private scoreboard: Scoreboard = {
+        player: 0,
+        opponent: 0,
+    };
     private settingsSubscriber: Subscription | undefined;
 
     constructor(props: PlayProps) {
@@ -55,7 +62,6 @@ class Play extends React.Component<PlayProps, PlayState> {
     }
 
     componentDidMount() {
-        this.scoreboard = new Scoreboard();
         this.settingsSubscriber = settingsStore.subscription().subscribe(this.handleSettingsSubscriber);
         const apiDataInLocalStorage = localStorage.getItem("apiDataSaved");
 
@@ -81,7 +87,7 @@ class Play extends React.Component<PlayProps, PlayState> {
         const characters = {
             player: next.player,
             opponent: next.opponent,
-        }
+        };
         this.setState({ characters });
     }
 
@@ -121,14 +127,28 @@ class Play extends React.Component<PlayProps, PlayState> {
         if (isValid) {
             if (score.player > score.opponent) {
                 result = "player";
+                this.increasePlayerScore(1);
             } else if (score.player === score.opponent) {
                 result = "draw";
+                this.increasePlayerScore(1);
+                this.increaseOpponentScore(1);
             } else if (score.player < score.opponent) {
                 result = "opponent";
+                this.increaseOpponentScore(1);
             }
         }
 
         return result;
+    }
+
+    increasePlayerScore = (value: number) => {
+        const { player } = this.scoreboard;
+        this.scoreboard.player = player + value;
+    }
+
+    increaseOpponentScore = (value: number) => {
+        const { opponent } = this.scoreboard;
+        this.scoreboard.opponent = opponent + value;
     }
 
     getDetailsOfId = (id: number) => {
@@ -167,7 +187,7 @@ class Play extends React.Component<PlayProps, PlayState> {
             <Main>
                 <TopBar />
                 <Container>
-                    <Controls />
+                    <Controls scoreboard={this.scoreboard} />
                     <h1 className={styles.helloWorld}>The winner is {result}! 🎉</h1>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={6}>
