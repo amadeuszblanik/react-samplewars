@@ -83,7 +83,7 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
                     value={id}
                     onChange={this.handleChange}
                 >
-                    <MenuItem value={0}>-- Select character --</MenuItem>
+                    <MenuItem value={0} disabled>-- Select character --</MenuItem>
                     {this.renderListItems()}
                 </Select>
             </FormControl>

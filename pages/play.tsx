@@ -27,6 +27,8 @@ interface PlayState {
         player: number;
         opponent: number;
     };
+    result: RESULT_SCORE;
+    totalMatches: number;
 }
 
 interface HomeGetInitialProps {
@@ -53,7 +55,9 @@ class Play extends React.Component<PlayProps, PlayState> {
             characters: {
                 player: 0,
                 opponent: 0,
-            }
+            },
+            result: "unknown",
+            totalMatches: 0
         };
     }
 
@@ -174,21 +178,57 @@ class Play extends React.Component<PlayProps, PlayState> {
         return dataOfId.data;
     }
 
+    handlePlay = () => {
+        const { totalMatches } = this.state;
+        this.setState({
+            result: this.getResult(),
+            totalMatches: totalMatches + 1
+        });
+    }
+
+    handleReset = () => {
+        this.setState({
+            characters: {
+                player: 0,
+                opponent: 0,
+            }
+        });
+
+        this.scoreboard = {
+            player: 0,
+            opponent: 0
+        };
+    }
+
     render() {
-        const { apiData, apiStatus, characters: { player: id, opponent: idOpponent } } = this.state;
+        const {
+            apiData,
+            apiStatus,
+            characters:
+                {
+                    player: id,
+                    opponent: idOpponent
+                },
+            result,
+            totalMatches
+        } = this.state;
 
         if (!apiData) {
             return (<Loading content={!apiStatus ? "You need to reinitialise application" : "Loading…"} />);
         }
 
-        const result: RESULT_SCORE = this.getResult();
-
         return (
             <Main>
                 <TopBar />
                 <Container>
-                    <Controls scoreboard={this.scoreboard} />
-                    <h1 className={styles.helloWorld}>The winner is {result}! 🎉</h1>
+                    <Controls
+                        scoreboard={this.scoreboard}
+                        onPlay={this.handlePlay}
+                        onReset={this.handleReset}
+                    />
+                    <h1 className={styles.helloWorld}>
+                        {totalMatches > 0 ? `The winner is ${result}! 🎉` : "Select characters to start 👾"}
+                    </h1>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={6}>
                             <SelectPlayer type="player" data={apiData} initialValue={id} />
