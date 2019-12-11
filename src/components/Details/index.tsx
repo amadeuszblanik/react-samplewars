@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./styles.scss";
-import {Button, Card, CardActions, CardContent, Typography} from "@material-ui/core";
+import {Card, CardContent, Typography} from "@material-ui/core";
 import {PeopleApi, StarshipApi} from "../../dao/types";
 import {forEachObject} from "../../utils";
 import {TRANSLATIONS} from "./translations";
@@ -60,9 +60,6 @@ class Details extends React.PureComponent<DetailsProps> {
                         </Typography>
                         {this.renderChildren()}
                     </CardContent>
-                    <CardActions>
-                        <Button size="small">Learn More</Button>
-                    </CardActions>
                 </Card>
             </div>
         );

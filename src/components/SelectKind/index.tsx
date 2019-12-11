@@ -1,83 +1,22 @@
 import React from "react";
-import {FormControl, InputLabel, MenuItem, Select} from "@material-ui/core";
+import {Button} from "@material-ui/core";
 import {KIND} from "../../dao/types";
-import {Subscription} from "rxjs";
-import {settingsStore} from "../../services";
-import {Settings} from "../../services/settings";
+import {Link} from "../index";
 
 export interface SelectKindProps {
-    list?: KIND[];
+    kind: KIND;
 }
 
-export interface SelectKindState {
-    value: KIND;
-}
+const SelectKind: React.FunctionComponent<SelectKindProps> = props => {
+    const { kind } = props;
 
-class SelectKind extends React.PureComponent<SelectKindProps, SelectKindState> {
-    private settingsSubscriber: Subscription | undefined;
+    const nextKind: KIND = kind === "people" ? "starships" : "people";
 
-    static defaultProps = {
-        list: ["people", "starships"]
-    }
-
-    constructor(props: SelectKindProps) {
-        super(props);
-
-        this.state = { value: "people" };
-    }
-
-    componentDidMount() {
-        this.settingsSubscriber = settingsStore.subscription().subscribe(this.handleSettingsSubscriber);
-    }
-
-    componentWillUnmount() {
-        if (this.settingsSubscriber === undefined) {
-            return;
-        }
-
-        this.settingsSubscriber.unsubscribe();
-    }
-
-    handleSettingsSubscriber = (next: Settings) => {
-        this.setState({ value: next.kind });
-    }
-
-    handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        const { target: { value } } = event;
-        settingsStore.setKind(value as KIND);
-    }
-
-    renderListItems = () => {
-        const { list } = this.props;
-        const children: JSX.Element[] = [];
-
-        if (!list) {
-            return;
-        }
-
-        list.forEach(entry => {
-            children.push(<MenuItem key={entry} value={entry}>{entry}</MenuItem>);
-        });
-
-        return children;
-    }
-
-    render() {
-        const { value } = this.state;
-        return(
-            <FormControl style={{ width: "100%" }}>
-                <InputLabel id="select-kind_label">Select kind of battle</InputLabel>
-                <Select
-                    labelId="select-kind_label"
-                    id="select-kind_select"
-                    value={value}
-                    onChange={this.handleChange}
-                >
-                    {this.renderListItems()}
-                </Select>
-            </FormControl>
-        );
-    }
-}
+    return(
+        <Link href={`/play?kind=${nextKind}`} as={`/play/${nextKind}`}>
+            <Button variant="contained">Switch to {nextKind}</Button>
+        </Link>
+    );
+};
 
 export default SelectKind;

@@ -7,6 +7,7 @@ import {KIND, ResultListResponse, ResultListResponseSingle} from "../src/dao/typ
 import {Subscription} from "rxjs";
 import {settingsStore} from "../src/services";
 import {Settings} from "../src/services/settings";
+import {getRandomNumber} from "../src/utils";
 
 type RESULT_SCORE = "player" | "opponent" | "draw" | "unknown";
 
@@ -29,6 +30,10 @@ interface PlayState {
     };
     result: RESULT_SCORE;
     totalMatches: number;
+    npc?: {
+        player: boolean;
+        opponent: boolean;
+    };
 }
 
 interface HomeGetInitialProps {
@@ -92,7 +97,9 @@ class Play extends React.Component<PlayProps, PlayState> {
             player: next.player,
             opponent: next.opponent,
         };
-        this.setState({ characters });
+        const npc = next.npc;
+
+        this.setState({ characters, npc });
     }
 
     getResult = () => {
@@ -178,8 +185,33 @@ class Play extends React.Component<PlayProps, PlayState> {
         return dataOfId.data;
     }
 
+    setRandomCharacters = () => {
+        const { kind } = this.props;
+        const { npc } = this.state;
+
+        const { apiData } = this.state;
+
+        if (!apiData || !npc) {
+            return;
+        }
+
+        const currentKindData: ResultListResponseSingle | undefined = apiData[kind!];
+
+        if (!currentKindData) {
+            return;
+        }
+
+        if (npc.player) {
+            settingsStore.setPlayer(getRandomNumber(1, currentKindData.list.length));
+        }
+        if (npc.opponent) {
+            settingsStore.setOpponent(getRandomNumber(1, currentKindData.list.length));
+        }
+    }
+
     handlePlay = () => {
         const { totalMatches } = this.state;
+        this.setRandomCharacters();
         this.setState({
             result: this.getResult(),
             totalMatches: totalMatches + 1
@@ -201,6 +233,7 @@ class Play extends React.Component<PlayProps, PlayState> {
     }
 
     render() {
+        const { kind } = this.props;
         const {
             apiData,
             apiStatus,
@@ -222,6 +255,7 @@ class Play extends React.Component<PlayProps, PlayState> {
                 <TopBar />
                 <Container>
                     <Controls
+                        kind={kind}
                         scoreboard={this.scoreboard}
                         onPlay={this.handlePlay}
                         onReset={this.handleReset}
@@ -231,10 +265,20 @@ class Play extends React.Component<PlayProps, PlayState> {
                     </h1>
                     <Grid container spacing={3}>
                         <Grid item xs={12} md={6}>
-                            <SelectPlayer type="player" data={apiData} initialValue={id} />
+                            <SelectPlayer
+                                type="player"
+                                data={apiData}
+                                kind={kind}
+                                initialValue={id}
+                            />
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <SelectPlayer type="opponent" data={apiData} initialValue={idOpponent} />
+                            <SelectPlayer
+                                type="opponent"
+                                data={apiData}
+                                kind={kind}
+                                initialValue={idOpponent}
+                            />
                         </Grid>
                         <Grid item xs={12} md={6}>
                             <Details

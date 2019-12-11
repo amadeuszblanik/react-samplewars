@@ -1,48 +1,35 @@
 import React from "react";
-import {Button, FormControl, Grid, InputLabel, MenuItem, Select} from "@material-ui/core";
+import {FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch} from "@material-ui/core";
 import {KIND, ResultListItem, ResultListResponse, ResultListResponseSingle} from "../../dao/types";
 import {settingsStore} from "../../services";
-import {Subscription} from "rxjs";
-import {Settings} from "../../services/settings";
 import {getRandomNumber} from "../../utils";
 
-interface SelectPlayerProps {
+export interface SelectPlayerProps {
     type: "player" | "opponent";
     data: ResultListResponse;
     initialValue: number;
+    kind: KIND;
 }
 
 interface SelectPlayerState {
     id: number;
-    kind: KIND;
+    npc: boolean;
 }
 
 class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerState> {
-    private settingsSubscriber: Subscription | undefined;
-
     constructor(props: SelectPlayerProps) {
         super(props);
         const { initialValue } = props;
 
         this.state = {
             id: initialValue,
-            kind: "people",
+            npc: true,
         };
     }
 
     componentDidMount() {
-        this.settingsSubscriber = settingsStore.subscription().subscribe(this.handleSettingsSubscriber);
+        this.randomiseCharacter();
     }
-
-    componentWillUnmount() {
-        if (this.settingsSubscriber === undefined) {
-            return;
-        }
-
-        this.settingsSubscriber.unsubscribe();
-    }
-
-    handleSettingsSubscriber = (next: Settings) => this.setState({ kind: next.kind });
 
     handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         const { type } = this.props;
@@ -56,8 +43,7 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
     }
 
     getListCurrentKind = () => {
-        const { data } = this.props;
-        const { kind } = this.state;
+        const { data, kind } = this.props;
         const dataKind: ResultListResponseSingle | undefined = data[kind!];
         return typeof dataKind !== "undefined" ? dataKind.list : [];
     }
@@ -77,18 +63,35 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
     }
 
     randomiseCharacter = () => {
-        const list: ResultListItem[] = this.getListCurrentKind();
+        const { npc } = this.state;
 
-        if (!list) {
-            return;
+        if (!npc) {
+            const list: ResultListItem[] = this.getListCurrentKind();
+
+            if (!list) {
+                return;
+            }
+
+            this.setState({id: getRandomNumber(1, list.length)});
+        }
+    }
+
+    handleRandom = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { type } = this.props;
+        const { target: checked } = event;
+        this.randomiseCharacter();
+        if (type === "player") {
+            settingsStore.setPlayerNPC(checked.checked);
+        } else if (type === "opponent") {
+            settingsStore.setOpponentNPC(checked.checked);
         }
 
-        this.setState({ id: getRandomNumber(1, list.length) });
+        this.setState({ npc: checked.checked });
     }
 
     render() {
         const { type } = this.props;
-        const { id } = this.state;
+        const { id, npc } = this.state;
         return(
             <FormControl style={{ width: "100%" }}>
                 <Grid container spacing={3}>
@@ -100,15 +103,19 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
                             value={id}
                             onChange={this.handleChange}
                             style={{ width: "100%" }}
+                            disabled={ npc }
                         >
                             <MenuItem value={0} disabled>-- Select character --</MenuItem>
                             {this.renderListItems()}
                         </Select>
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <Button color="primary" onClick={this.randomiseCharacter}>
-                            Random
-                        </Button>
+                        <FormControlLabel
+                            control={
+                                <Switch checked={npc} onChange={this.handleRandom} />
+                            }
+                            label="NPC"
+                        />
                     </Grid>
                 </Grid>
             </FormControl>

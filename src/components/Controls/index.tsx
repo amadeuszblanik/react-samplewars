@@ -3,15 +3,17 @@ import styles from "./styles.scss";
 import {Button, Grid, Typography} from "@material-ui/core";
 import {SelectKind} from "../index";
 import {Scoreboard} from "../../../pages/play";
+import {KIND} from "../../dao/types";
 
 export interface ControlsProps {
+    kind: KIND;
     scoreboard: Scoreboard;
     onPlay: () => void;
     onReset: () => void;
 }
 
 const Controls: React.FunctionComponent<ControlsProps> = props => {
-    const { scoreboard: { player, opponent }, onPlay, onReset } = props;
+    const { kind, scoreboard: { player, opponent }, onPlay, onReset } = props;
 
     return(
         <div className={styles.Controls}>
@@ -33,7 +35,7 @@ const Controls: React.FunctionComponent<ControlsProps> = props => {
                     </Typography>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                    <SelectKind />
+                    <SelectKind kind={kind} />
                 </Grid>
             </Grid>
         </div>
