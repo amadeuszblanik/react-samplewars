@@ -61,3 +61,5 @@ export interface ResultListResponseSingle {
 export type ResultListResponse = {
     [key in KIND]?: ResultListResponseSingle;
 }
+
+export type CacheApi = { [key: string]: any }

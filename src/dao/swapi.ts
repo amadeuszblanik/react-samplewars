@@ -1,11 +1,12 @@
 import fetch from "isomorphic-unfetch";
-import {KIND, ResultApi, ResultListItem, ResultListResponse} from "./types";
+import {KIND, CacheApi, ResultApi, ResultListItem, ResultListResponse} from "./types";
 import {forEachObject} from "../utils";
 
 const BASE_URL = "https://swapi.co/api/";
 
 class SwApi {
     private kinds: KIND[];
+    private cache: CacheApi = {};
 
     constructor(kinds: KIND[] = ["people", "starships"]) {
         this.kinds = kinds;
@@ -23,19 +24,32 @@ class SwApi {
     }
 
     getValueOf = async (url: string, value: string) => {
-        const response = await this.http(url + "?format=json");
-        return response[value];
+        if (this.cache[value]) {
+            return this.cache[value];
+        }
+
+        const res = await this.http(url + "?format=json");
+        const response = res[value];
+        this.cache[value] = response;
+        return response;
     }
 
     getValueOfAll = async (urls: string[], value: string) => {
+        if (this.cache[value]) {
+            return this.cache[value];
+        }
+
         const values: string[] = [];
 
         for(const url of urls) {
-            const response = await this.http(url + "?format=json");
-            values.push(response[value]);
+            const res = await this.http(url + "?format=json");
+            values.push(res[value]);
         }
 
-        return values.length > 0 ? values.join(", ") : "None";
+        const response = values.length > 0 ? values.join(", ") : "None";
+        this.cache[value] = response;
+
+        return response;
     }
 
     getResultsOfKind = async (kind: KIND) => {
