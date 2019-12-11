@@ -5,6 +5,7 @@ import { shallow } from "enzyme";
 import Controls, {ControlsProps} from "./../index";
 
 const __CONTROLS__: ControlsProps = {
+    kind: "people",
     scoreboard: {
         player: 3,
         opponent: 0,

@@ -96,10 +96,10 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
             <FormControl style={{ width: "100%" }}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={8}>
-                        <InputLabel id={`select-player-label_${type}`}>Select player for {type}</InputLabel>
+                        <InputLabel id={`select-player-label_${type}`}>Select character for {type}</InputLabel>
                         <Select
                             labelId={`select-player-label_${type}`}
-                            id={`select-player-${type}`}
+                            id={`select-player_${type}`}
                             value={id}
                             onChange={this.handleChange}
                             style={{ width: "100%" }}
