@@ -87,7 +87,7 @@ class Home extends React.Component<{}, HomeState> {
                             </Fab>
                         </Link>
                     </div>
-                    <Typography variant="body2" color="textSecondary" align="center">Amadeusz Blanik &copy 2019</Typography>
+                    <Typography variant="body2" color="textSecondary" align="center"><Link href="https://blanik.me">Amadeusz Blanik</Link> &copy; 2019</Typography>
                 </main>
             </Main>
         );
