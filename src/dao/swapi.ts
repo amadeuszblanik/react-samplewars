@@ -55,7 +55,7 @@ class SwApi {
     getResultsOfKind = async (kind: KIND) => {
         let hasNextElement = true,
             currentPage = 1,
-            resultIndex = 1,
+            resultIndex = 0,
             length = 0;
         const list: ResultListItem[] = [];
 
@@ -68,19 +68,34 @@ class SwApi {
             for (const result of results) {
                 const resultTransformed: any = {};
                 forEachObject(result, async (key, value) => {
-                    if (key === "species") {
+
+                    switch (key) {
+                    case "species":
                         value = await this.getValueOf(value, "name");
-                    } else if (key === "homeworld") {
+                        break;
+                    case "homeworld":
                         value = await this.getValueOf(value, "name");
-                    } else if (key === "films") {
+                        break;
+                    case "films":
                         value = await this.getValueOfAll(value, "title");
-                    } else if (key === "vehicles") {
+                        break;
+                    case "vehicles":
                         value = await this.getValueOfAll(value, "name");
-                    } else if (key === "starships") {
+                        break;
+                    case "starships":
                         value = await this.getValueOfAll(value, "name");
-                    } else if (key === "pilots") {
+                        break;
+                    case "pilots":
                         value = await this.getValueOfAll(value, "name");
+                        break;
+                    case "crew":
+                        value = value.replace(",", "");
+                        break;
+                    case "mass":
+                        value = value.replace(",", "");
+                        break;
                     }
+
                     resultTransformed[key] = value;
                 });
 
