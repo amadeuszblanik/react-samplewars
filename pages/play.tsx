@@ -76,8 +76,11 @@ class Play extends React.Component<PlayProps, PlayState> {
     }
 
     componentDidMount() {
+        const { kind } = this.props;
         this.settingsSubscriber = settingsStore.subscription().subscribe(this.handleSettingsSubscriber);
         const apiDataInLocalStorage = localStorage.getItem("apiDataSaved");
+
+        settingsStore.setKind(kind);
 
         if (!apiDataInLocalStorage) {
             this.setState({ apiStatus: false });
