@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {ResultListResponse} from "../../../dto";
 
 export const data: ResultListResponse = {

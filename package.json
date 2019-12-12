@@ -57,6 +57,7 @@
   },
   "pre-commit": [
     "lint:js",
-    "test"
+    "test",
+    "build"
   ]
 }
