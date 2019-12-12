@@ -24,7 +24,7 @@ const Loading: React.FunctionComponent<LoadingProps> = props => {
                     <div className={styles.Content}>
                         <Typography variant="h5" color="textSecondary" align="center">{content}</Typography>
                     </div>
-                    <Link href={`/?c=${new Date().getTime()}`} >
+                    <Link href="/" >
                         <Button variant="contained" onClick={clearLocalStorage}>Restart</Button>
                     </Link>
                 </div>
