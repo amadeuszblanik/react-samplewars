@@ -237,6 +237,7 @@ class Play extends React.Component<PlayProps, PlayState> {
             result: this.getResult(),
             totalMatches: totalMatches + 1,
         });
+        this.forceUpdate();
     }
 
     handleReset = () => {
@@ -314,7 +315,11 @@ class Play extends React.Component<PlayProps, PlayState> {
                             />
                         </Grid>
                     </Grid>
-                    <Typography variant="body2" color="textSecondary" align="center">user agent: <span></span></Typography>
+                    <a href="https://blanik.me">
+                        <Typography variant="body2" color="textSecondary" align="center">
+                            Amadeusz Blanik &copy; 2019
+                        </Typography>
+                    </a>
                 </Container>
             </Main>
         );
