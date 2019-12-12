@@ -24,7 +24,7 @@ describe("SelectPlayer", () => {
             detail
                 .children()
                 .find("#select-player_player")
-                .childAt(1)
+                .childAt(0)
                 .text()
         ).toEqual("Luke Skywalker");
     });
