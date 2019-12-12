@@ -2,7 +2,6 @@ import React from "react";
 import {FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Switch} from "@material-ui/core";
 import {KIND, ResultListItem, ResultListResponse, ResultListResponseSingle} from "../../dto";
 import {settingsStore} from "../../services";
-import {getRandomNumber} from "../../utils";
 
 export interface SelectPlayerProps {
     type: "player" | "opponent";
@@ -25,10 +24,6 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
             id: initialValue,
             npc: true,
         };
-    }
-
-    componentDidMount() {
-        this.randomiseCharacter();
     }
 
     handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -71,24 +66,10 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
         return typeof dataKind !== "undefined" ? dataKind.list : [];
     }
 
-    randomiseCharacter = () => {
-        const { npc } = this.state;
-
-        if (!npc) {
-            const list: ResultListItem[] = this.getListCurrentKind();
-
-            if (!list) {
-                return;
-            }
-
-            this.setState({id: getRandomNumber(1, list.length)});
-        }
-    }
-
     handleRandom = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { type } = this.props;
         const { target: checked } = event;
-        this.randomiseCharacter();
+
         if (type === "player") {
             settingsStore.setPlayerNPC(checked.checked);
         } else if (type === "opponent") {
