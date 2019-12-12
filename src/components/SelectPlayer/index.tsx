@@ -128,7 +128,6 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
                             style={{ width: "100%" }}
                             disabled={ npc }
                         >
-                            <MenuItem value={0}>-- Select character --</MenuItem>
                             {this.renderListItems()}
                         </Select>
                     </Grid>
