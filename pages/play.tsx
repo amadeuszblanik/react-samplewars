@@ -3,10 +3,10 @@ import { Main } from "../src/layout";
 import styles from "./index.scss";
 import {Container, Grid, Typography} from "@material-ui/core";
 import {Controls, Details, TopBar, SelectPlayer, Loading} from "../src/components";
-import {KIND, ResultListResponse, ResultListResponseSingle} from "../src/dto";
+import {KIND, PeopleApi, ResultListResponse, ResultListResponseSingle, StarshipApi} from "../src/dto";
 import {Subscription} from "rxjs";
 import {settingsStore} from "../src/services";
-import {Settings} from "../src/services/settings";
+import {Settings, SettingsCharacter} from "../src/services/settings";
 import {getRandomNumber} from "../src/utils";
 
 type RESULT_SCORE = "player" | "opponent" | "draw" | "unknown";
@@ -25,8 +25,8 @@ interface PlayState {
     apiStatus: boolean;
     currentResult: RESULT_SCORE;
     characters: {
-        player: number;
-        opponent: number;
+        player: SettingsCharacter;
+        opponent: SettingsCharacter;
     };
     result: RESULT_SCORE;
     totalMatches: number;
@@ -43,6 +43,11 @@ interface HomeGetInitialProps {
     req: any;
 }
 
+const CHARACTER_INNITIAL_VALUE: SettingsCharacter = {
+    id: 0,
+    points: NaN
+};
+
 class Play extends React.Component<PlayProps, PlayState> {
     private scoreboard: Scoreboard = {
         player: 0,
@@ -58,8 +63,8 @@ class Play extends React.Component<PlayProps, PlayState> {
             apiStatus: true,
             currentResult: "draw",
             characters: {
-                player: 0,
-                opponent: 0,
+                player: CHARACTER_INNITIAL_VALUE,
+                opponent: CHARACTER_INNITIAL_VALUE,
             },
             result: "unknown",
             totalMatches: 0
@@ -102,54 +107,47 @@ class Play extends React.Component<PlayProps, PlayState> {
         this.setState({ characters, npc });
     }
 
-    getResult = () => {
-        let result: RESULT_SCORE = "unknown";
-        const { kind } = this.props;
-        const { apiData, characters: { player: id, opponent: idOpponent } } = this.state;
+    getCharacters = () => {
+        const { npc } = this.state;
+        const currentKindData = this.getCurrentKindData();
+        const { characters: { player, opponent } } = this.state;
 
-        if (!apiData || !this.scoreboard) {
-            return result;
-        }
-
-        const currentKindData: ResultListResponseSingle | undefined = apiData[kind!];
-        const score = {
-            player: 0,
-            opponent: 0,
-        };
-
-
-        if (typeof currentKindData === "undefined") {
-            return result;
-        }
-
-        const playerData = currentKindData.list[id].data;
-        const opponentData = currentKindData.list[idOpponent].data;
-
-        if ("mass" in playerData && "mass" in opponentData) {
-            score.player = Number(playerData.mass);
-            score.opponent = Number(opponentData.mass);
-        } else if ("crew" in playerData && "crew" in opponentData) {
-            score.player = Number(playerData.crew);
-            score.opponent = Number(opponentData.crew);
-        }
-
-        const isValid = !isNaN(score.player) && !isNaN(score.opponent);
-
-        if (isValid) {
-            if (score.player > score.opponent) {
-                result = "player";
-                this.increasePlayerScore(1);
-            } else if (score.player === score.opponent) {
-                result = "draw";
-                this.increasePlayerScore(1);
-                this.increaseOpponentScore(1);
-            } else if (score.player < score.opponent) {
-                result = "opponent";
-                this.increaseOpponentScore(1);
+        if (npc && currentKindData) {
+            if (npc.player) {
+                player.id = getRandomNumber(1, currentKindData.list.length);
+                player.points = this.getPointsOfId(player.id);
+                settingsStore.setPlayer(player.id, player.points);
+            }
+            if (npc.opponent) {
+                opponent.id = getRandomNumber(1, currentKindData.list.length);
+                opponent.points = this.getPointsOfId(opponent.id);
+                settingsStore.setOpponent(opponent.id, opponent.points);
             }
         }
 
-        return result;
+        return { player, opponent };
+    }
+
+    getResult = () => {
+        const { player: { points: valuePlayer }, opponent: { points: valueOpponent } } = this.getCharacters();
+        const isAnyNaN = isNaN(valuePlayer) || isNaN(valueOpponent);
+
+        if (isAnyNaN) {
+            return "unknown";
+        }
+
+        if (valuePlayer > valueOpponent) {
+            this.increasePlayerScore(1);
+            return "player";
+        } else if (valuePlayer === valueOpponent) {
+            this.increasePlayerScore(1);
+            this.increaseOpponentScore(1);
+            return "draw";
+        } else if (valuePlayer < valueOpponent) {
+            this.increaseOpponentScore(1);
+            return "opponent";
+        }
+        return "unknown";
     }
 
     increasePlayerScore = (value: number) => {
@@ -162,7 +160,7 @@ class Play extends React.Component<PlayProps, PlayState> {
         this.scoreboard.opponent = opponent + value;
     }
 
-    getDetailsOfId = (id: number) => {
+    getCurrentKindData = () => {
         const { kind } = this.props;
         const { apiData } = this.state;
 
@@ -171,12 +169,17 @@ class Play extends React.Component<PlayProps, PlayState> {
         }
 
         const dataKind: ResultListResponseSingle | undefined = apiData[kind];
+        return dataKind;
+    }
+
+    getDetailsOfId = (id: number) => {
+        const dataKind = this.getCurrentKindData();
 
         if (dataKind === undefined) {
             return undefined;
         }
 
-        const dataOfId = dataKind.list[id - 1];
+        const dataOfId = dataKind.list[id];
 
         if (dataOfId === undefined) {
             return undefined;
@@ -185,44 +188,62 @@ class Play extends React.Component<PlayProps, PlayState> {
         return dataOfId.data;
     }
 
+    getPointsOfId = (id: number) => {
+        const data: PeopleApi | StarshipApi | undefined = this.getDetailsOfId(id);
+        let points = NaN;
+
+        if (data) {
+            if ("mass" in data) {
+                points = Number(data.mass);
+            }
+            if ("crew" in data) {
+                points = Number(data.crew);
+            }
+        }
+
+        return points;
+    }
+
     setRandomCharacters = () => {
-        const { kind } = this.props;
         const { npc } = this.state;
 
-        const { apiData } = this.state;
-
-        if (!apiData || !npc) {
+        if (!npc) {
             return;
         }
 
-        const currentKindData: ResultListResponseSingle | undefined = apiData[kind!];
+        const currentKindData = this.getCurrentKindData();
 
         if (!currentKindData) {
             return;
         }
 
         if (npc.player) {
-            settingsStore.setPlayer(getRandomNumber(1, currentKindData.list.length));
+            const id = getRandomNumber(1, currentKindData.list.length);
+            const points = this.getPointsOfId(id);
+
+            settingsStore.setPlayer(id, points);
         }
         if (npc.opponent) {
-            settingsStore.setOpponent(getRandomNumber(1, currentKindData.list.length));
+            const id = getRandomNumber(1, currentKindData.list.length);
+            const points = this.getPointsOfId(id);
+
+            settingsStore.setOpponent(id, points);
         }
     }
 
     handlePlay = () => {
         const { totalMatches } = this.state;
-        this.setRandomCharacters();
         this.setState({
             result: this.getResult(),
-            totalMatches: totalMatches + 1
+            totalMatches: totalMatches + 1,
         });
     }
 
     handleReset = () => {
         this.setState({
             characters: {
-                player: 0,
-                opponent: 0,
+                player: CHARACTER_INNITIAL_VALUE,
+                opponent: CHARACTER_INNITIAL_VALUE,
             }
         });
 
@@ -239,8 +260,8 @@ class Play extends React.Component<PlayProps, PlayState> {
             apiStatus,
             characters:
                 {
-                    player: id,
-                    opponent: idOpponent
+                    player: { id: id },
+                    opponent: { id: idOpponent }
                 },
             result,
             totalMatches
@@ -280,13 +301,13 @@ class Play extends React.Component<PlayProps, PlayState> {
                                 initialValue={idOpponent}
                             />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={6}>
                             <Details
                                 title="player"
                                 data={this.getDetailsOfId(id)}
                             />
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} sm={6}>
                             <Details
                                 title="opponent"
                                 data={this.getDetailsOfId(idOpponent)}

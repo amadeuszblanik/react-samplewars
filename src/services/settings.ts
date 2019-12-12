@@ -1,10 +1,15 @@
 import {BehaviorSubject} from "rxjs";
 import {KIND} from "../dto";
 
+export interface SettingsCharacter {
+    id: number;
+    points: number;
+}
+
 export interface Settings {
     kind: KIND;
-    player: number;
-    opponent: number;
+    player: SettingsCharacter;
+    opponent: SettingsCharacter;
     npc: {
         player: boolean;
         opponent: boolean;
@@ -13,8 +18,14 @@ export interface Settings {
 
 const initialState: Settings = {
     kind: "people",
-    player: 0,
-    opponent: 0,
+    player: {
+        id: 0,
+        points: 0,
+    },
+    opponent: {
+        id: 0,
+        points: 0,
+    },
     npc: {
         player: true,
         opponent: true,
@@ -34,19 +45,25 @@ export const settingsStore = {
             opponent: subject.value.npc.opponent,
         }
     }),
-    setPlayer: (next: number) => subject.next({
+    setPlayer: (id: number, points: number) => subject.next({
         kind: subject.value.kind,
-        player: next,
+        player: {
+            id,
+            points
+        },
         opponent: subject.value.opponent ,
         npc: {
             player: subject.value.npc.player,
             opponent: subject.value.npc.opponent,
         }
     }),
-    setOpponent: (next: number) => subject.next({
+    setOpponent: (id: number, points: number) => subject.next({
         kind: subject.value.kind,
         player: subject.value.player,
-        opponent: next,
+        opponent: {
+            id,
+            points
+        },
         npc: {
             player: subject.value.npc.player,
             opponent: subject.value.npc.opponent,

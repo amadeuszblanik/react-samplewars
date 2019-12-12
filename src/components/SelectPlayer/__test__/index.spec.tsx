@@ -20,9 +20,6 @@ describe("SelectPlayer", () => {
 
     it("renders selectplayer correct equipment list item", () => {
         const detail = shallow(<SelectPlayer {...__SELECTPLATER__} />);
-        console.log(detail
-            .children()
-            .find("#select-player_player"));
         expect(
             detail
                 .children()

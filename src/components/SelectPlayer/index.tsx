@@ -34,10 +34,33 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
     handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         const { type } = this.props;
         const { target: { value } } = event;
+
+        const currentList = this.getListCurrentKind();
+
+        if (!currentList) {
+            return;
+        }
+
+        const currentData = currentList[value as number].data;
+
+        let points = NaN;
+        if ("mass" in currentData) {
+            points = Number(currentData.mass);
+        }
+        if ("crew" in currentData) {
+            points = Number(currentData.crew);
+        }
+
         if (type === "player") {
-            settingsStore.setPlayer(value as number);
+            settingsStore.setPlayer(
+                value as number,
+                points
+            );
         } else if (type === "opponent") {
-            settingsStore.setOpponent(value as number);
+            settingsStore.setOpponent(
+                value as number,
+                points
+            );
         }
         this.setState({ id: value as number });
     }
@@ -46,20 +69,6 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
         const { data, kind } = this.props;
         const dataKind: ResultListResponseSingle | undefined = data[kind!];
         return typeof dataKind !== "undefined" ? dataKind.list : [];
-    }
-
-    renderListItems = () => {
-        const list: ResultListItem[] = this.getListCurrentKind();
-        const children: JSX.Element[] = [];
-
-        if (!list) {
-            return children;
-        }
-
-        list.forEach((entry: ResultListItem) => {
-            children.push(<MenuItem key={entry.id} value={entry.id}>{entry.data.name}</MenuItem>);
-        });
-        return children;
     }
 
     randomiseCharacter = () => {
@@ -89,6 +98,20 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
         this.setState({ npc: checked.checked });
     }
 
+    renderListItems = () => {
+        const list: ResultListItem[] = this.getListCurrentKind();
+        const children: JSX.Element[] = [];
+
+        if (!list) {
+            return children;
+        }
+
+        list.forEach((entry: ResultListItem) => {
+            children.push(<MenuItem key={entry.id} value={entry.id}>{entry.data.name}</MenuItem>);
+        });
+        return children;
+    }
+
     render() {
         const { type } = this.props;
         const { id, npc } = this.state;
@@ -105,7 +128,7 @@ class SelectPlayer extends React.PureComponent<SelectPlayerProps, SelectPlayerSt
                             style={{ width: "100%" }}
                             disabled={ npc }
                         >
-                            <MenuItem value={0} disabled>-- Select character --</MenuItem>
+                            <MenuItem value={0}>-- Select character --</MenuItem>
                             {this.renderListItems()}
                         </Select>
                     </Grid>
