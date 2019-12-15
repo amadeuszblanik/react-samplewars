@@ -1,6 +1,7 @@
 import React from "react";
-import { Settings, settingsStore } from "./settings";
 import { Subscription } from "rxjs";
+import { settingsStore } from "./settings";
+import { Settings } from "./types";
 
 export interface InjectedWithSettingsProps {
   settings: Settings;
@@ -32,6 +33,12 @@ export const withSettings = <P extends InjectedWithSettingsProps>(Component: Rea
             player: true,
             opponent: true,
           },
+          result: "unknown",
+          scoreboard: {
+            player: 0,
+            opponent: 0,
+          },
+          totalMatches: 0,
         },
       };
     }
