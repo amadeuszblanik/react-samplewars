@@ -41,6 +41,9 @@ const Item = styled.div`
 
   @media screen and (min-width: 767px) {
     flex-direction: row;
+    & > * {
+      margin: 4px;
+    }
   }
 `;
 
