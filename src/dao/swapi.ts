@@ -145,7 +145,7 @@ class SwApi {
               break;
           }
 
-          resultTransformed[key as keyof PeopleApi | keyof StarshipApi] = value;
+          resultTransformed[key as keyof PeopleApi & keyof StarshipApi] = value;
         });
 
         list.push({ id: resultIndex, data: resultTransformed });

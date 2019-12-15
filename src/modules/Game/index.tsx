@@ -1,12 +1,13 @@
-import React from "react";
+import React, {useEffect} from "react";
 import styled from "styled-components";
-import { Controls, Details, ScoreboardComponent, SelectCharacter, SelectKind, TopBar } from "../../components";
+import {Controls, Details, Footer, ScoreboardComponent, SelectCharacter, SelectKind, TopBar} from "../../components";
 import { Container, Grid } from "@material-ui/core";
 import { Main } from "../../layout";
 import { getDataOfKind, withApiData } from "../../utils";
 import { InjectedWithApiData } from "../../utils/withApiData";
 import { KIND } from "../../dto";
 import Result from "../../components/Result";
+import {settingsStore} from "../../services";
 
 interface GamecoreProps extends InjectedWithApiData {
   kind: KIND;
@@ -26,6 +27,10 @@ const Col = styled(Grid)`
 const Game: React.FunctionComponent<GamecoreProps> = props => {
   const { kind, apiData } = props;
   const dataCurrentKind = getDataOfKind(apiData, kind);
+
+  useEffect(() => {
+    settingsStore.setKind(kind);
+  })
 
   return (
     <Main>
@@ -58,6 +63,7 @@ const Game: React.FunctionComponent<GamecoreProps> = props => {
           </Grid>
         </Grid>
       </Container>
+      <Footer variant="secondary" />
     </Main>
   );
 };

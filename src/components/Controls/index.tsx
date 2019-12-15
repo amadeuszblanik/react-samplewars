@@ -24,6 +24,7 @@ const Controls: React.FunctionComponent<PlayProps> = props => {
       scoreboard,
       npc: { player: npcPlayer, opponent: npcOpponent },
       totalMatches,
+      kind,
     },
   } = props;
 
@@ -42,8 +43,8 @@ const Controls: React.FunctionComponent<PlayProps> = props => {
   idOpponent = !npcOpponent ? idOpponent : getRandomNumber(0, data.list.length - 1);
 
   const points: Scoreboard = {
-    player: getPoints(data.list[id].data),
-    opponent: getPoints(data.list[idOpponent].data),
+    player: getPoints(data.list[id].data, kind),
+    opponent: getPoints(data.list[idOpponent].data, kind),
   };
 
   const ids = {
