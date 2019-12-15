@@ -13,8 +13,13 @@ class SwApi {
   }
 
   http = async (url: string) => {
+    if (this.cache[url]) {
+      return this.cache[url];
+    }
     const results = await fetch(`${url}`);
-    return await results.json();
+    const response = await results.json();
+    this.cache[url] = response;
+    return response;
   };
 
   fetchData = async (kind: KIND, page: number) => {
@@ -24,21 +29,11 @@ class SwApi {
   };
 
   getValueOf = async (url: string, value: string) => {
-    if (this.cache[value]) {
-      return this.cache[value];
-    }
-
     const res = await this.http(url + "?format=json");
-    const response = res[value];
-    this.cache[value] = response;
-    return response;
+    return res[value];
   };
 
   getValueOfAll = async (urls: string[], value: string) => {
-    if (this.cache[value]) {
-      return this.cache[value];
-    }
-
     const values: string[] = [];
 
     for (const url of urls) {
@@ -46,10 +41,7 @@ class SwApi {
       values.push(res[value]);
     }
 
-    const response = values.length > 0 ? values.join(", ") : "None";
-    this.cache[value] = response;
-
-    return response;
+    return values.length > 0 ? values.join(", ") : "None";
   };
 
   dateFormat = (value: string) => {
