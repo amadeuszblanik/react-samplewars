@@ -2,13 +2,16 @@ module.exports = {
     "env": {
         "browser": true,
         "es6": true,
-        "node": true
+        "node": true,
+        "jest": true
     },
     "extends": [
         "eslint:recommended",
         "plugin:react/recommended",
         "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "plugin:jest/recommended",
+        "plugin:prettier/recommended",
     ],
     "globals": {
         "Atomics": "readonly",
@@ -17,41 +20,39 @@ module.exports = {
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaFeatures": {
-            "jsx": true
+            "arrowFunctions": true,
+            "jsx": true,
+            "restParams": true,
+            "spread": true,
         },
         "ecmaVersion": 2018,
         "sourceType": "module"
     },
     "plugins": [
         "react",
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "prettier",
+        "jest"
     ],
     "rules": {
-        "indent": [
-            "error",
-            4
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
+        "@typescript-eslint/indent": "off",
+        "linebreak-style": "off",
         "quotes": [
             "error",
             "double"
         ],
-        "semi": [
-            "error",
-            "always"
-        ],
+        "no-extra-semi": "error",
         "react/destructuring-assignment": [2, "always"],
         "react/prefer-es6-class": "warn",
+        "react/prop-types": "off",
+        "react/display-name": "warn",
         "func-names": ["error", "as-needed"],
         "no-plusplus": "off",
         "max-len": [
             "warn",
             {
-                "code": 240,
-                "ignoreComments": true
+                "code": 120,
+                "ignoreComments": false
             }
         ],
         "no-shadow": [
@@ -66,6 +67,31 @@ module.exports = {
                 "ignoreRestSiblings": true
             }
         ],
+        "prettier/prettier": [
+            "error",
+            {
+                "singleQuote": false,
+                "jsxSingleQuote": false,
+                "printWidth": 120,
+                "trailingComma": "all"
+            }
+        ],
+        "strict": ["error", "safe"],
+        "space-before-function-paren": [
+            "error",
+            {
+                "anonymous": "never",
+                "named": "never",
+                "asyncArrow": "always"
+            }
+        ],
+        "spaced-comment": ["error", "always"],
+        "vars-on-top": "error",
+        "no-shadow": [
+            "error",
+            { "builtinGlobals": false, "hoist": "functions", "allow": [] }
+        ],
+        "no-console": "warn",
     },
     "settings": {
         "react": {
