@@ -1,7 +1,6 @@
 import React from "react";
 import { Avatar, createStyles, makeStyles, Theme, Typography } from "@material-ui/core";
-import { withSettings } from "../../services";
-import { InjectedWithSettingsProps } from "../../services/withSettings";
+import { useSettings } from "../../services";
 import { blue, deepPurple } from "@material-ui/core/colors";
 import styled from "styled-components";
 
@@ -31,7 +30,7 @@ const Row = styled.div`
   @media screen and (min-width: 520px) {
     flex-direction: row;
   }
-`
+`;
 
 const Item = styled.div`
   display: flex;
@@ -47,14 +46,13 @@ const Item = styled.div`
   }
 `;
 
-const Scoreboard: React.FunctionComponent<InjectedWithSettingsProps> = props => {
+const Scoreboard: React.FunctionComponent = () => {
   const classes = useStyles();
+  const settings = useSettings();
   const {
-    settings: {
-      scoreboard: { player, opponent },
-      totalMatches,
-    },
-  } = props;
+    scoreboard: { player, opponent },
+    totalMatches,
+  } = settings;
 
   return (
     <Row className={classes.scoreboard}>
@@ -80,4 +78,4 @@ const Scoreboard: React.FunctionComponent<InjectedWithSettingsProps> = props => 
   );
 };
 
-export default withSettings(Scoreboard);
+export default Scoreboard;
