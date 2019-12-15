@@ -1,5 +1,5 @@
 import fetch from "isomorphic-unfetch";
-import { KIND, CacheApi, ResultApi, ResultListItem, ResultListResponse } from "../dto";
+import { KIND, CacheApi, ResultApi, ResultListItem, ResultListResponse, PeopleApi, StarshipApi } from "../dto";
 import { forEachObject } from "../utils";
 
 const BASE_URL = "https://swapi.co/api/";
@@ -52,6 +52,11 @@ class SwApi {
     return response;
   };
 
+  dateFormat = (value: string) => {
+    const date = new Date(value);
+    return `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
+  }
+
   getResultsOfKind = async (kind: KIND) => {
     let hasNextElement = true,
       currentPage = 1,
@@ -66,7 +71,46 @@ class SwApi {
       length = count;
 
       for (const result of results) {
-        const resultTransformed: any = {};
+        const resultTransformed: PeopleApi & StarshipApi = {
+          name: "",
+          mass: "",
+          height: "",
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          hair_color: "",
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          skin_color: "",
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          eye_color: "",
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          birth_year: "",
+          gender: "female",
+          homeworld: "",
+          species: [""],
+          vehicles: [""],
+          starships: [""],
+          crew: "",
+          model: "",
+          manufacturer: "",
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          cost_in_credists: "",
+          length: "",
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          max_atmosphering_speed: "",
+          passengers: "",
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          cargo_capacity: "",
+          consumables: "",
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          hyperdrive_rating: "",
+          MGLT: "",
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          starship_class: "",
+          films: [""],
+          pilots: [""],
+          created: this.dateFormat(""),
+          edited: this.dateFormat(""),
+          url: "",
+        };
         forEachObject(result, async (key, value) => {
           switch (key) {
             case "species":
@@ -93,10 +137,18 @@ class SwApi {
             case "mass":
               value = value.replace(",", "");
               break;
+            case "created":
+              value = this.dateFormat(value);
+              break;
+            case "edited":
+              value = this.dateFormat(value);
+              break;
           }
 
-          resultTransformed[key] = value;
+          resultTransformed[key as keyof PeopleApi | keyof StarshipApi] = value;
         });
+
+        console.debug({ resultTransformed });
 
         list.push({ id: resultIndex, data: resultTransformed });
         resultIndex++;

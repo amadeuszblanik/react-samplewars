@@ -14,8 +14,8 @@ export interface PeopleApi {
   species: string[];
   vehicles: string[];
   starships: string[];
-  created: Date;
-  edited: Date;
+  created: string;
+  edited: string;
   url: string;
 }
 
@@ -35,8 +35,8 @@ export interface StarshipApi {
   starship_class: string;
   pilots: string[];
   films: string[];
-  created: Date;
-  edited: Date;
+  created: string;
+  edited: string;
   url: string;
 }
 
