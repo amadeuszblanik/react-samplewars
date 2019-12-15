@@ -2,13 +2,14 @@ import React from "react";
 import { GameCore } from "../src/modules";
 import { KIND } from "../src/dto";
 import { settingsStore } from "../src/services";
+import { NextPage } from "next";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-const Game: NextPage<{ kind: KIND }> = ({ kind }) => <GameCore kind={kind} />;
+interface StatelessPage<P = {}> extends NextPage<P> {
+  getInitialProps?: (ctx: any) => Promise<P>;
+}
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
+const Game: StatelessPage<{ kind: KIND }> = ({ kind }) => <GameCore kind={kind} />;
+
 Game.getInitialProps = async ({ query: { kind } }) => {
   settingsStore.setKind(kind);
   return { kind };
