@@ -1,45 +1,66 @@
 import React from "react";
-import styles from "./styles.scss";
-import {Button, Grid, Typography} from "@material-ui/core";
-import {SelectKind} from "../index";
-import {Scoreboard} from "../../../pages/play";
-import {KIND} from "../../dto";
+import { Button } from "@material-ui/core";
+import { Scoreboard } from "../../services/types";
+import { settingsStore, withSettings } from "../../services";
+import { getPoints, getRandomNumber, getResult, setCharacter } from "../../utils";
+import { InjectedWithSettingsProps } from "../../services/withSettings";
+import { ResultListResponseSingle } from "../../dto";
 
-export interface ControlsProps {
-    kind: KIND;
-    scoreboard: Scoreboard;
-    onPlay: () => void;
-    onReset: () => void;
+interface PlayProps extends InjectedWithSettingsProps {
+  data?: ResultListResponseSingle;
 }
 
-const Controls: React.FunctionComponent<ControlsProps> = props => {
-    const { kind, scoreboard: { player, opponent }, onPlay, onReset } = props;
-
-    return(
-        <div className={styles.Controls}>
-            <Grid container spacing={3}>
-                <Grid item xs={4} md={4}>
-                    <Button id="button_play" className={styles.Play} variant="contained" color="primary" onClick={onPlay}>
-                        🔫 Battle
-                    </Button>
-                    <Button id="button_reset" variant="contained" color="secondary" onClick={onReset}>
-                        Reset
-                    </Button>
-                </Grid>
-                <Grid item xs={8} md={4}>
-                    <Typography color="textSecondary">
-                            Scoreboard
-                    </Typography>
-                    <Typography variant="body2" component="p">
-                        Player: <span id="scoreboard_player">{player}</span> — Opponent: <span id="scoreboard_opponent">{opponent}</span>
-                    </Typography>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                    <SelectKind kind={kind} />
-                </Grid>
-            </Grid>
-        </div>
-    );
+const handlePlay = (matches: number, id: Scoreboard, points: Scoreboard, scoreboard: Scoreboard) => () => {
+  settingsStore.setTotalMatches(matches + 1);
+  settingsStore.setResult(getResult(points, scoreboard));
+  setCharacter("player", id.player, points.player, false);
+  setCharacter("opponent", id.opponent, points.opponent, false);
 };
 
-export default Controls;
+const Controls: React.FunctionComponent<PlayProps> = props => {
+  const {
+    data,
+    settings: {
+      scoreboard,
+      npc: { player: npcPlayer, opponent: npcOpponent },
+      totalMatches,
+    },
+  } = props;
+
+  let {
+    settings: {
+      player: { id },
+      opponent: { id: idOpponent },
+    },
+  } = props;
+
+  if (!data) {
+    return <>Error</>;
+  }
+
+  id = !npcPlayer ? id : getRandomNumber(0, data.list.length - 1);
+  idOpponent = !npcOpponent ? idOpponent : getRandomNumber(0, data.list.length - 1);
+
+  const points: Scoreboard = {
+    player: getPoints(data.list[id].data),
+    opponent: getPoints(data.list[idOpponent].data),
+  };
+
+  const ids = {
+    player: id,
+    opponent: idOpponent,
+  };
+
+  return (
+    <Button
+      id="button_play"
+      variant="contained"
+      color="primary"
+      onClick={handlePlay(totalMatches, ids, points, scoreboard)}
+    >
+      🔫 Battle
+    </Button>
+  );
+};
+
+export default withSettings(Controls);

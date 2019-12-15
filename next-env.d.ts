@@ -2,9 +2,9 @@
 /// <reference types="next/types/global" />
 
 declare module "*.scss" {
-    interface IClassNames {
-        [className: string]: string;
-    }
-    const classNames: IClassNames;
-    export = classNames;
+  interface ClassNames {
+    [className: string]: string;
+  }
+  const classNames: ClassNames;
+  export = classNames;
 }

@@ -1,69 +1,52 @@
 import React from "react";
 import styles from "./styles.scss";
-import {Card, CardContent, Typography} from "@material-ui/core";
-import {PeopleApi, StarshipApi} from "../../dto";
-import {forEachObject} from "../../utils";
-import {TRANSLATIONS} from "./translations";
+import { Card, CardContent, Typography } from "@material-ui/core";
+import List from "./List";
+import { withSettings } from "../../services";
+import { getDetailsOfId } from "../../utils";
+import { InjectedWithSettingsProps } from "../../services/withSettings";
+import { ResultListResponse } from "../../dto";
+import { TYPE } from "../SelectCharacter";
 
-type DATA = PeopleApi | StarshipApi | undefined;
-
-interface DetailsProps {
-    title: "player" | "opponent";
-    data: DATA | undefined;
+interface DetailsProps extends InjectedWithSettingsProps {
+  type: TYPE;
+  data: ResultListResponse;
 }
 
-class Details extends React.PureComponent<DetailsProps> {
-    renderChildren() {
-        const { data } = this.props;
-        const children: JSX.Element[] = [];
+const Details: React.FunctionComponent<DetailsProps> = props => {
+  const {
+    data,
+    type,
+    settings: {
+      kind,
+      player: { id },
+      opponent: { id: idOpponent },
+    },
+  } = props;
 
-        if (!data) {
-            return children;
-        }
+  const currentId = type === "player" ? id : idOpponent;
 
-        { forEachObject(data, (key, value) => {
-            if (key === "name") {
-                return;
-            }
+  const dataCurrent = getDetailsOfId(data, currentId, kind);
 
-            children.push(
-                <div key={key}>
-                    <Typography color="textSecondary">
-                        {TRANSLATIONS[key]}
-                    </Typography>
-                    <Typography variant="body2" component="p">
-                        {value}
-                    </Typography>
-                </div>
-            );
-        }); }
+  if (dataCurrent === undefined) {
+    return <></>;
+  }
 
-        return children;
-    }
+  return (
+    <div className={styles.Details}>
+      <Card>
+        <CardContent>
+          <Typography color="textSecondary" gutterBottom>
+            Character of {type}
+          </Typography>
+          <Typography variant="h5" component="h2">
+            {dataCurrent.name}
+          </Typography>
+          <List items={dataCurrent!} />
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
 
-    render() {
-        const { data, title } = this.props;
-
-        if (data === undefined) {
-            return <></>;
-        }
-
-        return(
-            <div className={styles.Details}>
-                <Card>
-                    <CardContent>
-                        <Typography color="textSecondary" gutterBottom>
-                            Character of {title}
-                        </Typography>
-                        <Typography variant="h5" component="h2">
-                            {data.name}
-                        </Typography>
-                        {this.renderChildren()}
-                    </CardContent>
-                </Card>
-            </div>
-        );
-    }
-}
-
-export default Details;
+export default withSettings(Details);

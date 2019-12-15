@@ -1,3 +1,11 @@
 export { default as forEachObject } from "./forEachObject";
 export { default as getRandomNumber } from "./getRandomNumber";
 export { daysDiff, hoursDiff } from "./dateDiff";
+export { getCurrentList } from "./getCurrentList";
+export { getDataOfKind } from "./getDataOfKind";
+export { getDetailsOfId } from "./getDetailsOfId";
+export { getCurrentData } from "./getCurrentData";
+export { getPoints } from "./getPoints";
+export { getResult } from "./getResult";
+export { setCharacter } from "./setCharacter";
+export { withApiData } from "./withApiData";

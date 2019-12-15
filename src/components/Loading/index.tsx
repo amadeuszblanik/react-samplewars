@@ -1,40 +1,44 @@
 import React from "react";
-import {Button, Container, Typography} from "@material-ui/core";
+import { Button, Container, Typography } from "@material-ui/core";
 import * as styles from "./styles.scss";
-import {Main} from "../../layout";
-import {Link, TopBar} from "../index";
+import { Main } from "../../layout";
+import { Link, TopBar } from "../index";
 
 interface LoadingProps {
-    content?: string;
+  content?: string;
 }
 
 const clearLocalStorage = () => {
-    localStorage.removeItem("apiDataSaved");
-    localStorage.removeItem("apiDataSavedTimestamp");
-}
+  localStorage.removeItem("apiDataSaved");
+  localStorage.removeItem("apiDataSavedTimestamp");
+};
 
 const Loading: React.FunctionComponent<LoadingProps> = props => {
-    const { content } = props;
+  const { content } = props;
 
-    return(
-        <Main>
-            <TopBar />
-            <Container>
-                <div className={styles.Loading}>
-                    <div className={styles.Content}>
-                        <Typography variant="h5" color="textSecondary" align="center">{content}</Typography>
-                    </div>
-                    <Link href="/" >
-                        <Button variant="contained" onClick={clearLocalStorage}>Restart</Button>
-                    </Link>
-                </div>
-            </Container>
-        </Main>
-    );
+  return (
+    <Main>
+      <TopBar />
+      <Container>
+        <div className={styles.Loading}>
+          <div className={styles.Content}>
+            <Typography variant="h5" color="textSecondary" align="center">
+              {content}
+            </Typography>
+          </div>
+          <Link href="/">
+            <Button variant="contained" onClick={clearLocalStorage}>
+              Restart
+            </Button>
+          </Link>
+        </div>
+      </Container>
+    </Main>
+  );
 };
 
 Loading.defaultProps = {
-    content: "Loading…"
+  content: "Loading…",
 };
 
 export default Loading;
