@@ -1,18 +1,18 @@
 import React from "react";
-import { Main } from "../src/layout";
-import styles from "./index.scss";
-import { Fab, Typography } from "@material-ui/core";
-import GamesIcon from "@material-ui/icons/Games";
-import { Loading, TopBar } from "../src/components";
+import { Loading } from "../src/components";
 import { SwApi } from "../src/dao";
 import { ResultListResponse } from "../src/dto";
 import { hoursDiff } from "../src/utils";
-import Link from "next/link";
+import Welcome from "../src/modules/Welcome";
 
 interface HomeState {
   fetching: boolean;
   error?: string;
 }
+
+// This app uses SSR-rendering, and data from API is stored on client-side in localStorage.
+// So it's better to use class component here and starts fetching after component did mount.
+//
 
 class Home extends React.Component<{}, HomeState> {
   constructor(props: Readonly<{}>) {
@@ -75,26 +75,7 @@ class Home extends React.Component<{}, HomeState> {
     if (error) {
       return <Loading content={error} />;
     }
-    return (
-      <Main>
-        <main>
-          <TopBar />
-          <div className={styles.playWrapper}>
-            <Link href="/play?kind=people" as="/play/people/">
-              <Fab variant="extended" disabled={fetching}>
-                <GamesIcon />
-                {fetching ? "Loading…" : "Play"}
-              </Fab>
-            </Link>
-          </div>
-          <a href="https://blanik.me">
-            <Typography variant="body2" color="textSecondary" align="center">
-              Amadeusz Blanik &copy; 2019
-            </Typography>
-          </a>
-        </main>
-      </Main>
-    );
+    return <Welcome canPlay={!fetching} />;
   }
 }
 

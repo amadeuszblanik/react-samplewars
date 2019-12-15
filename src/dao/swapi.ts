@@ -55,7 +55,7 @@ class SwApi {
   dateFormat = (value: string) => {
     const date = new Date(value);
     return `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
-  }
+  };
 
   getResultsOfKind = async (kind: KIND) => {
     let hasNextElement = true,
