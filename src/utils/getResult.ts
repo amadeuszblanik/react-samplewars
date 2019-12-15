@@ -14,8 +14,7 @@ export const getResult = (points: Scoreboard, scoreboard: Scoreboard) => {
     settingsStore.setScoreboard({ player: player + 1, opponent });
     return "player";
   } else if (valuePlayer === valueOpponent) {
-    settingsStore.setScoreboard({ player: player + 1, opponent });
-    settingsStore.setScoreboard({ player: player, opponent: opponent + 1 });
+    settingsStore.setScoreboard({ player: player + 1, opponent: opponent + 1 });
     return "draw";
   } else if (valuePlayer < valueOpponent) {
     settingsStore.setScoreboard({ player: player, opponent: opponent + 1 });

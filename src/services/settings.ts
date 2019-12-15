@@ -8,11 +8,11 @@ export const initialState: Settings = {
   kind: "people",
   player: {
     id: 0,
-    points: 0,
+    points: NaN,
   },
   opponent: {
     id: 0,
-    points: 0,
+    points: NaN,
   },
   npc: {
     player: true,

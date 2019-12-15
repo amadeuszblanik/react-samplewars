@@ -1,5 +1,5 @@
 import React from "react";
-import { withSettings } from "../../services";
+import {withSettings} from "../../services";
 import { InjectedWithSettingsProps } from "../../services/withSettings";
 import { createStyles, FormControl, InputLabel, makeStyles, MenuItem, Select, Theme } from "@material-ui/core";
 import { ResultListResponse } from "../../dto";
@@ -41,7 +41,7 @@ export const SelectCharacter: React.FunctionComponent<SelectCharacterProps> = pr
     } = event;
     setSelectedItem(value as string);
 
-    const points = (value as string) === "" ? NaN : getPoints(currentList[value as number].data);
+    const points = (value as string) === "" ? NaN : getPoints(currentList[value as number].data, kind);
     setCharacter(type, value, points);
   };
 

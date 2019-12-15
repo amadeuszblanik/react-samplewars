@@ -1,10 +1,9 @@
-import { PeopleApi, StarshipApi } from "../dto";
+import { DATA, KIND } from "../dto";
 
-export const getPoints = (data: PeopleApi | StarshipApi) => {
-  if ("mass" in data) {
+export const getPoints = (data: DATA, kind: KIND) => {
+  if (kind === "people") {
     return Number(data.mass);
-  }
-  if ("crew" in data) {
+  } else if (kind === "starships") {
     return Number(data.crew);
   }
 

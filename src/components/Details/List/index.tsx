@@ -1,7 +1,7 @@
 import React from "react";
 import { Typography } from "@material-ui/core";
 import { TRANSLATIONS } from "./translations";
-import { DATA } from "../types";
+import { DATA } from "../../../dto";
 
 interface ListProps {
   items: DATA;

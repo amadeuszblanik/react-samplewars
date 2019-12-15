@@ -1,4 +1,6 @@
 export type KIND = "people" | "starships";
+export type DATA = PeopleApi & StarshipApi;
+export type DATA_ARRAY = PeopleApi[] & StarshipApi[];
 
 export interface PeopleApi {
   name: string;
@@ -44,12 +46,12 @@ export interface ResultApi {
   count: number;
   next: string;
   previous: string;
-  results: PeopleApi[] | StarshipApi[];
+  results: DATA[];
 }
 
 export interface ResultListItem {
   id: number;
-  data: PeopleApi | StarshipApi;
+  data: DATA;
 }
 
 export interface ResultListResponseSingle {
