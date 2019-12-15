@@ -1,14 +1,20 @@
 import { AppBar, Toolbar, Typography } from "@material-ui/core";
 import React from "react";
+import styled from "styled-components";
+
+const StyledAppbar = styled(AppBar)`
+  color: #fff;
+  background-color: #1F1B25;
+`
 
 const TopBar: React.FunctionComponent = () => (
-  <AppBar position="static" color="primary">
+  <StyledAppbar position="static" color="inherit">
     <Toolbar>
       <Typography variant="h5" noWrap>
         React: SampleWars
       </Typography>
     </Toolbar>
-  </AppBar>
+  </StyledAppbar>
 );
 
 export default TopBar;

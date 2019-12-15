@@ -148,8 +148,6 @@ class SwApi {
           resultTransformed[key as keyof PeopleApi | keyof StarshipApi] = value;
         });
 
-        console.debug({ resultTransformed });
-
         list.push({ id: resultIndex, data: resultTransformed });
         resultIndex++;
       }
