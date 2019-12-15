@@ -11,7 +11,7 @@ interface WithSettingsState {
 }
 
 export const withSettings = <P extends InjectedWithSettingsProps>(Component: React.ComponentType<P>) =>
-  class WithSettings extends React.PureComponent<P & InjectedWithSettingsProps, WithSettingsState> {
+  class WithSettings extends React.PureComponent<Omit<P, keyof InjectedWithSettingsProps>, WithSettingsState> {
     private settingsSubscriber: Subscription | undefined;
 
     constructor(props: Readonly<P & InjectedWithSettingsProps>) {
