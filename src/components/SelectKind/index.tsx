@@ -2,13 +2,10 @@ import React from "react";
 import { Button } from "@material-ui/core";
 import { KIND } from "../../dto";
 import { Link } from "../index";
+import { useSettings } from "../../services";
 
-export interface SelectKindProps {
-  kind: KIND;
-}
-
-const SelectKind: React.FunctionComponent<SelectKindProps> = props => {
-  const { kind } = props;
+const SelectKind: React.FunctionComponent = () => {
+  const { kind } = useSettings();
 
   const nextKind: KIND = kind === "people" ? "starships" : "people";
 

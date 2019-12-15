@@ -39,7 +39,7 @@ const Game: React.FunctionComponent<GamecoreProps> = props => {
             <ScoreboardComponent />
           </Col>
           <Col item xs={12} md={4}>
-            <SelectKind kind={kind} />
+            <SelectKind />
           </Col>
         </Row>
         <Result />

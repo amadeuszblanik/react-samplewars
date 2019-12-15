@@ -4,7 +4,7 @@ import { Scoreboard, Settings } from "./types";
 
 export type RESULT_SCORE = "player" | "opponent" | "draw" | "unknown";
 
-const initialState: Settings = {
+export const initialState: Settings = {
   kind: "people",
   player: {
     id: 0,
