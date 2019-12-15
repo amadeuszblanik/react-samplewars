@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "./styles.scss";
 import { Card, CardContent, Typography } from "@material-ui/core";
 import List from "./List";
 import { withSettings } from "../../services";
@@ -7,11 +6,16 @@ import { getDetailsOfId } from "../../utils";
 import { InjectedWithSettingsProps } from "../../services/withSettings";
 import { ResultListResponse } from "../../dto";
 import { TYPE } from "../SelectCharacter";
+import styled from "styled-components";
 
 interface DetailsProps extends InjectedWithSettingsProps {
   type: TYPE;
   data: ResultListResponse;
 }
+
+const Wrapper = styled.div`
+  margin-top: 24px;
+`;
 
 const Details: React.FunctionComponent<DetailsProps> = props => {
   const {
@@ -33,7 +37,7 @@ const Details: React.FunctionComponent<DetailsProps> = props => {
   }
 
   return (
-    <div className={styles.Details}>
+    <Wrapper>
       <Card>
         <CardContent>
           <Typography color="textSecondary" gutterBottom>
@@ -45,7 +49,7 @@ const Details: React.FunctionComponent<DetailsProps> = props => {
           <List items={dataCurrent!} />
         </CardContent>
       </Card>
-    </div>
+    </Wrapper>
   );
 };
 
