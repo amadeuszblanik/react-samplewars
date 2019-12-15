@@ -3,7 +3,6 @@
     "target": "esnext",
     "module": "esnext",
     "jsx": "preserve",
-    "typeRoots": ["./node_modules/@types"],
     "lib": [
       "dom",
       "es2017"
