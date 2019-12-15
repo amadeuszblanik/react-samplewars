@@ -22,6 +22,6 @@ jobs:
         yarn install --frozen-lockfile
         yarn run build
         yarn run test
-        yarn tun lint:js
+        yarn run lint:js
       env:
         CI: true
