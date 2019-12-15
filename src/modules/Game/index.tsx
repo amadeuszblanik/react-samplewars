@@ -6,6 +6,7 @@ import { Main } from "../../layout";
 import { getDataOfKind, withApiData } from "../../utils";
 import { InjectedWithApiData } from "../../utils/withApiData";
 import { KIND } from "../../dto";
+import Result from "../../components/Result";
 
 interface GamecoreProps extends InjectedWithApiData {
   kind: KIND;
@@ -41,6 +42,7 @@ const Game: React.FunctionComponent<GamecoreProps> = props => {
             <SelectKind kind={kind} />
           </Col>
         </Row>
+        <Result />
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <SelectCharacter type="player" data={apiData} />
