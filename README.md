@@ -15,6 +15,7 @@ Simple game written in React (Next.JS) that allows you to battle between two cha
 * Material-UI components (Focused only on TypeScript part).
 
 ## How to run
+Best with *yarn* and *node 10.16*
 
 ### Development
 1. Just download it with `git clone`
