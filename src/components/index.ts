@@ -6,4 +6,4 @@ export { default as Loading } from "./Loading";
 export { default as SelectCharacter } from "./SelectCharacter";
 export { default as ScoreboardComponent } from "./Scoreboard";
 export { default as Controls } from "./Controls";
-export { default as Result } from './Result';
+export { default as Result } from "./Result";
