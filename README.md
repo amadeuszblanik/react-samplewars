@@ -27,7 +27,7 @@ Best with *yarn* and *node 10.16*
 
 
 ## Assumptions
-A simple game in React (Next.JS) that allows you to fight between two characters or starships from SWAPI (https://swapi.co).
+A simple game in React (Next.JS) that allows you to fight between two characters or starships from SWAPI (https://swapi.dev).
 * There's score counter which counts how many wins player and opponent.
 * Option to select resources for each player
 * Material-UI components (Focused only on TypeScript part).
@@ -37,7 +37,7 @@ There's are pre-commits that's check eslint (with auto-fixes), JEST and Next Bui
 *GitHub only* actions for performing pre-commits check on every commits for NodeJS 10.x and 12.x.
 
 ## Api
-I used SWAPI (https://swapi.co) that fetch and transform all data during first visit (page: `/index.tsx`). Then data is stored on client side (in `localStorage`) and it's valid for 8 hours. 
+I used SWAPI (https://swapi.dev) that fetch and transform all data during first visit (page: `/index.tsx`). Then data is stored on client side (in `localStorage`) and it's valid for 8 hours. 
  * src/dao/swapi.ts
  * pages/index.tsx
  

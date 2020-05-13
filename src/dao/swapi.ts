@@ -2,7 +2,7 @@ import fetch from "isomorphic-unfetch";
 import { KIND, CacheApi, ResultApi, ResultListItem, ResultListResponse, PeopleApi, StarshipApi } from "../dto";
 import { forEachObject } from "../utils";
 
-const BASE_URL = "https://swapi.co/api/";
+const BASE_URL = "https://swapi.dev/api/";
 
 class SwApi {
   private kinds: KIND[];
